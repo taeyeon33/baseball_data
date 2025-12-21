@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 부트스트랩 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+    <!-- 아이콘 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- 구글 폰트 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <title>NPB Stats</title>
+</head>
+
+<body>
+    <header class="d-flex justify-content-between align-items-center p-3 text-white">
+        <div class="logo">
+            <a href="./index.html">
+                <span class="pe-1">⚾</span>
+                <span class="pb-1">Baseball Stats</span>
+            </a>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <button id="indexBtn" class="fw-bold">통계</button>
+            <button id="adminBtn">관리자</button>
+            <button id="themeBtn">
+                <i class="bi bi-moon-stars-fill"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="container my-4">
+        <a href="./index.html" class="back-btn btn btn-outline-secondary btn-sm mb-3">
+            <i class="bi bi-arrow-left"></i> Back to Stats
+        </a>
+
+        <div class="profile-card p-4 mb-4">
+            <div class="d-flex flex-column flex-md-row gap-4 align-items-start">
+                <div class="player-image-box shadow-sm flex-shrink-0 mx-auto mx-md-0">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div class="flex-grow-1 w-100">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h1 class="fw-bold mb-1" id="playerName">오카모토 카즈마</h1>
+                            <p class="fs-5 text-body-secondary mb-0" id="playerSubTitle">#25 • 1B • Yomiuri Giants</p>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 justify-content-end">
+                            <!-- <span class="badge rounded-pill text-bg-primary">2024 MVP</span>
+                            <span class="badge rounded-pill text-bg-primary">2024 골든글러브</span>
+                            <span class="badge rounded-pill text-bg-primary">2024 베스트나인</span> -->
+                        </div>
+                    </div>
+                    <table class="bio-table">
+                        <tbody>
+                            <tr>
+                                <th>등번호</th>
+                                <td>25</td>
+                                <th>소속팀</th>
+                                <td>Yomiuri Giants</td>
+                            </tr>
+                            <tr>
+                                <th>포지션</th>
+                                <td>1B • 3B • LF</td>
+                                <th>투타</th>
+                                <td>우투 우타</td>
+                            </tr>
+                            <tr>
+                                <th>신체</th>
+                                <td>186cm / 100kg</td>
+                                <th>생년월일</th>
+                                <td>1996년 06월 30일</td>
+                            </tr>
+                            <tr>
+                                <th>출신학교</th>
+                                <td>智弁学園高</td>
+                                <th>드래프트</th>
+                                <td>2014년 드래프트 1순위</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-card p-4">
+            <h5 class="fw-bold mb-3">연도별 성적</h5>
+            <div class="table-container p-0 border-0 bg-transparent shadow-none">
+                <table class="table table-hover mb-0" id="careerTable">
+                    <thead class="table-light box-shadow-none">
+                        <tr>
+                            <th>Season</th>
+                            <th>Team</th>
+                            <th>G</th>
+                            <th>AB</th>
+                            <th>H</th>
+                            <th>2B</th>
+                            <th>3B</th>
+                            <th>HR</th>
+                            <th>RBI</th>
+                            <th>R</th>
+                            <th>SB</th>
+                            <th>AVG</th>
+                            <th>OBP</th>
+                            <th>SLG</th>
+                            <th>OPS</th>
+                            <th>WAR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024</td>
+                            <td>Yomiuri Giants</td>
+                            <td>143</td>
+                            <td>567</td>
+                            <td>145</td>
+                            <td>25</td>
+                            <td>2</td>
+                            <td>35</td>
+                            <td>122</td>
+                            <td>80</td>
+                            <td>0</td>
+                            <td>0.319</td>
+                            <td>0.389</td>
+                            <td>0.689</td>
+                            <td>0.978</td>
+                            <td>6.14</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p class="mb-0">&copy; 2025 NPB Stats. All rights reserved.</p>
+    </footer>
+
+    <script src="../static/js/main.js"></script>
+</body>
+
+</html>

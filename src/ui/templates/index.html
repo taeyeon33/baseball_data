@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ko" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 부트스트랩 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+    <!-- 아이콘 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- 구글 폰트 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <title>NPB Stats</title>
+</head>
+
+<body>
+    <header class="d-flex justify-content-between align-items-center p-3 text-white">
+        <div class="logo">
+            <a href="./index.html">
+                <span class="pe-1">⚾</span>
+                <span class="pb-1">Baseball Stats</span>
+            </a>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <button id="indexBtn" class="fw-bold">통계</button>
+            <button id="adminBtn">관리자</button>
+            <button id="themeBtn">
+                <i class="bi bi-moon-stars-fill"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-page container-fluid px-3 my-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="fw-bold">리그 통계</h2>
+            <div class="select-form d-flex gap-2">
+                <select class="form-select form-select-sm" id="seasonSelector">
+                    <option value="2026">2026 시즌</option>
+                    <option value="2025">2025 시즌</option>
+                    <option value="2024">2024 시즌</option>
+                    <option value="2023">2023 시즌</option>
+                    <option value="2022">2022 시즌</option>
+                </select>
+                <select class="form-select form-select-sm" id="leagueSelector">
+                    <option value="KBO">KBO</option>
+                    <option value="MLB">MLB</option>
+                    <option value="NPB">NPB</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-nav mb-3 d-flex">
+            <button id="battingBtn" class="table-menu px-3 py-2 border-0 active">타격 지표</button>
+            <button id="pitchingBtn" class="table-menu px-3 py-2 border-0">투구 지표</button>
+        </div>
+
+        <div class="table-content">
+            <table id="battingTable" class="table active">
+                <thead>
+                    <tr>
+                        <th data-column="Rank">Rank</th>
+                        <th data-column="Name">Name</th>
+                        <th data-column="Team">Team</th>
+                        <th data-column="Season">Season</th>
+                        <th data-column="G">G</th>
+                        <th data-column="PA">PA</th>
+                        <th data-column="ePA">ePA</th>
+                        <th data-column="AB">AB</th>
+                        <th data-column="H">H</th>
+                        <th data-column="2B">2B</th>
+                        <th data-column="3B">3B</th>
+                        <th data-column="HR">HR</th>
+                        <th data-column="TB">TB</th>
+                        <th data-column="RBI">RBI</th>
+                        <th data-column="R">R</th>
+                        <th data-column="SB">SB</th>
+                        <th data-column="CS">CS</th>
+                        <th data-column="BB">BB</th>
+                        <th data-column="HBP">HBP</th>
+                        <th data-column="IB">IB</th>
+                        <th data-column="SO">SO</th>
+                        <th data-column="GDP">GDP</th>
+                        <th data-column="SH">SH</th>
+                        <th data-column="SF">SF</th>
+                        <th data-column="AVG">AVG</th>
+                        <th data-column="OBP">OBP</th>
+                        <th data-column="SLG">SLG</th>
+                        <th data-column="OPS">OPS</th>
+                        <th data-column="WAR">WAR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            <a class="player-name" href="./player.html">무라카미 무네타카</a>
+                        </td>
+                        <td>SSG</td>
+                        <td>2025</td>
+                        <td>144</td>
+                        <td>567</td>
+                        <td>567</td>
+                        <td>345</td>
+                        <td>123</td>
+                        <td>12</td>
+                        <td>1</td>
+                        <td>34</td>
+                        <td>134</td>
+                        <td>123</td>
+                        <td>122</td>
+                        <td>12</td>
+                        <td>2</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>213</td>
+                        <td>213</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>0.456</td>
+                        <td>0.456</td>
+                        <td>0.678</td>
+                        <td>1.012</td>
+                        <td>8.88</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>무라카미 무네타카</td>
+                        <td>SSG</td>
+                        <td>2025</td>
+                        <td>144</td>
+                        <td>567</td>
+                        <td>567</td>
+                        <td>345</td>
+                        <td>123</td>
+                        <td>12</td>
+                        <td>1</td>
+                        <td>34</td>
+                        <td>134</td>
+                        <td>123</td>
+                        <td>122</td>
+                        <td>12</td>
+                        <td>2</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>213</td>
+                        <td>213</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>0.456</td>
+                        <td>0.456</td>
+                        <td>0.678</td>
+                        <td>1.012</td>
+                        <td>8.88</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>무라카미 무네타카</td>
+                        <td>SSG</td>
+                        <td>2025</td>
+                        <td>144</td>
+                        <td>567</td>
+                        <td>567</td>
+                        <td>345</td>
+                        <td>123</td>
+                        <td>12</td>
+                        <td>1</td>
+                        <td>34</td>
+                        <td>134</td>
+                        <td>123</td>
+                        <td>122</td>
+                        <td>12</td>
+                        <td>2</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>213</td>
+                        <td>213</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>0.456</td>
+                        <td>0.456</td>
+                        <td>0.678</td>
+                        <td>1.012</td>
+                        <td>8.88</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>무라카미 무네타카</td>
+                        <td>SSG</td>
+                        <td>2025</td>
+                        <td>144</td>
+                        <td>567</td>
+                        <td>567</td>
+                        <td>345</td>
+                        <td>123</td>
+                        <td>12</td>
+                        <td>1</td>
+                        <td>34</td>
+                        <td>134</td>
+                        <td>123</td>
+                        <td>122</td>
+                        <td>12</td>
+                        <td>2</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>213</td>
+                        <td>213</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>0.456</td>
+                        <td>0.456</td>
+                        <td>0.678</td>
+                        <td>1.012</td>
+                        <td>8.88</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>무라카미 무네타카</td>
+                        <td>SSG</td>
+                        <td>2025</td>
+                        <td>144</td>
+                        <td>567</td>
+                        <td>567</td>
+                        <td>345</td>
+                        <td>123</td>
+                        <td>12</td>
+                        <td>1</td>
+                        <td>34</td>
+                        <td>134</td>
+                        <td>123</td>
+                        <td>122</td>
+                        <td>12</td>
+                        <td>2</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>213</td>
+                        <td>213</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>0.456</td>
+                        <td>0.456</td>
+                        <td>0.678</td>
+                        <td>1.012</td>
+                        <td>8.88</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>무라카미 무네타카</td>
+                        <td>SSG</td>
+                        <td>2025</td>
+                        <td>144</td>
+                        <td>567</td>
+                        <td>567</td>
+                        <td>345</td>
+                        <td>123</td>
+                        <td>12</td>
+                        <td>1</td>
+                        <td>34</td>
+                        <td>134</td>
+                        <td>123</td>
+                        <td>122</td>
+                        <td>12</td>
+                        <td>2</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>213</td>
+                        <td>213</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>0.456</td>
+                        <td>0.456</td>
+                        <td>0.678</td>
+                        <td>1.012</td>
+                        <td>8.88</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>무라카미 무네타카</td>
+                        <td>SSG</td>
+                        <td>2025</td>
+                        <td>144</td>
+                        <td>567</td>
+                        <td>567</td>
+                        <td>345</td>
+                        <td>123</td>
+                        <td>12</td>
+                        <td>1</td>
+                        <td>34</td>
+                        <td>134</td>
+                        <td>123</td>
+                        <td>122</td>
+                        <td>12</td>
+                        <td>2</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>213</td>
+                        <td>213</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>0.456</td>
+                        <td>0.456</td>
+                        <td>0.678</td>
+                        <td>1.012</td>
+                        <td>8.88</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>무라카미 무네타카</td>
+                        <td>SSG</td>
+                        <td>2025</td>
+                        <td>144</td>
+                        <td>567</td>
+                        <td>567</td>
+                        <td>345</td>
+                        <td>123</td>
+                        <td>12</td>
+                        <td>1</td>
+                        <td>34</td>
+                        <td>134</td>
+                        <td>123</td>
+                        <td>122</td>
+                        <td>12</td>
+                        <td>2</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>213</td>
+                        <td>213</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>0.456</td>
+                        <td>0.456</td>
+                        <td>0.678</td>
+                        <td>1.012</td>
+                        <td>8.88</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>무라카미 무네타카</td>
+                        <td>SSG</td>
+                        <td>2025</td>
+                        <td>144</td>
+                        <td>567</td>
+                        <td>567</td>
+                        <td>345</td>
+                        <td>123</td>
+                        <td>12</td>
+                        <td>1</td>
+                        <td>34</td>
+                        <td>134</td>
+                        <td>123</td>
+                        <td>122</td>
+                        <td>12</td>
+                        <td>2</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>213</td>
+                        <td>213</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>0.456</td>
+                        <td>0.456</td>
+                        <td>0.678</td>
+                        <td>1.012</td>
+                        <td>8.88</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>무라카미 무네타카</td>
+                        <td>SSG</td>
+                        <td>2025</td>
+                        <td>144</td>
+                        <td>567</td>
+                        <td>567</td>
+                        <td>345</td>
+                        <td>123</td>
+                        <td>12</td>
+                        <td>1</td>
+                        <td>34</td>
+                        <td>134</td>
+                        <td>123</td>
+                        <td>122</td>
+                        <td>12</td>
+                        <td>2</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>213</td>
+                        <td>213</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>0.456</td>
+                        <td>0.456</td>
+                        <td>0.678</td>
+                        <td>1.012</td>
+                        <td>8.88</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>무라카미 무네타카</td>
+                        <td>SSG</td>
+                        <td>2025</td>
+                        <td>144</td>
+                        <td>567</td>
+                        <td>567</td>
+                        <td>345</td>
+                        <td>123</td>
+                        <td>12</td>
+                        <td>1</td>
+                        <td>34</td>
+                        <td>134</td>
+                        <td>123</td>
+                        <td>122</td>
+                        <td>12</td>
+                        <td>2</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>213</td>
+                        <td>213</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>0.456</td>
+                        <td>0.456</td>
+                        <td>0.678</td>
+                        <td>1.012</td>
+                        <td>8.88</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>무라카미 무네타카</td>
+                        <td>SSG</td>
+                        <td>2025</td>
+                        <td>144</td>
+                        <td>567</td>
+                        <td>567</td>
+                        <td>345</td>
+                        <td>123</td>
+                        <td>12</td>
+                        <td>1</td>
+                        <td>34</td>
+                        <td>134</td>
+                        <td>123</td>
+                        <td>122</td>
+                        <td>12</td>
+                        <td>2</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>213</td>
+                        <td>213</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>0.456</td>
+                        <td>0.456</td>
+                        <td>0.678</td>
+                        <td>1.012</td>
+                        <td>8.88</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table id="pitchingTable" class="table">
+                <thead>
+                    <tr>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        <p class="mb-0">&copy; 2025 NPB Stats. All rights reserved.</p>
+    </footer>
+
+    <script src="../static/js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,5 @@
+.env
+/test
+export_excel.py
+game_logs.xlsx
+__pycache__
