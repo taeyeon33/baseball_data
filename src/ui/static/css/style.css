@@ -222,3 +222,6 @@ footer {
 
 /* admin.html */
 
+#loginSection .card {
+    background-color: var(--card-bg);
+}

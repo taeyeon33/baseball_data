@@ -26,14 +26,18 @@ themeBtn.addEventListener("click", e => {
 
 // header 버튼
 const indexBtn = document.querySelector("#indexBtn");
-indexBtn.addEventListener("click", e => {
-    location.href = "./index.html";
-});
+if (indexBtn) {
+    indexBtn.addEventListener("click", e => {
+        location.href = "/";
+    });
+}
 
 const adminBtn = document.querySelector("#adminBtn");
-adminBtn.addEventListener("click", e => {
-    location.href = "./admin.html";
-});
+if (adminBtn) {
+    adminBtn.addEventListener("click", e => {
+        location.href = "/admin";
+    });
+}
 
 // index.html 탭 버튼
 const tabs = [
