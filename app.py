@@ -1,10 +1,12 @@
 from flask import Flask, request, session, jsonify, redirect, send_from_directory, abort
 from functools import wraps
-import subprocess
+# import subprocess
 import os
 
 from src.db.connect import get_connection
 from src.config import UI_DIR, CSS_DIR, JS_DIR
+
+from src.services.admin_service import get_all_tables, get_all_players
 
 app = Flask(__name__)
 
@@ -63,7 +65,19 @@ def admin_page():
         return redirect("/login")
     return send_from_directory(UI_DIR, "admin.html")
 
+# 테이블 목록 데이터
+@app.route("/api/admin/tables")
+@admin_required
+def api_admin_tables():
+    tables = get_all_tables()
+    return jsonify(tables)
+
+# 선수 목록 데이터
+@app.route("/api/admin/players")
+@admin_required
+def api_admin_players():
+    players = get_all_players()
+    return jsonify(players)
 
 if __name__ == "__main__":
-    print(os.path.exists(os.path.join(UI_DIR, "index.html")))
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=80, debug=True)

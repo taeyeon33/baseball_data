@@ -225,3 +225,23 @@ footer {
 #loginSection .card {
     background-color: var(--card-bg);
 }
+
+.nav-tabs button {
+    color: var(--bs-primary);
+}
+
+.modal-backdrop-custom {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, .6);
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-dialog-custom {
+    width: 70%;
+    background-color: var(--card-bg);
+    border-radius: 5px;
+    overflow: hidden;
+}
