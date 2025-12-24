@@ -6,7 +6,7 @@ import os
 from src.db.connect import get_connection
 from src.config import UI_DIR, CSS_DIR, JS_DIR
 
-from src.services.admin_service import get_all_tables, get_all_players
+from src.services.admin_service import get_all_tables, get_all_players, insert_data
 
 app = Flask(__name__)
 
@@ -66,18 +66,28 @@ def admin_page():
     return send_from_directory(UI_DIR, "admin.html")
 
 # 테이블 목록 데이터
-@app.route("/api/admin/tables")
+@app.route("/api/admin/tables", methods=["POST"])
 @admin_required
 def api_admin_tables():
     tables = get_all_tables()
     return jsonify(tables)
 
 # 선수 목록 데이터
-@app.route("/api/admin/players")
+@app.route("/api/admin/players", methods=["POST"])
 @admin_required
 def api_admin_players():
     players = get_all_players()
     return jsonify(players)
+
+@app.route("/api/admin/insert", methods=["POST"])
+@admin_required
+def api_admin_insert():
+    data = request.json
+    if not data or "table" not in data:
+        return jsonify({"message": "데이터 형식이 올바르지 않습니다."}), 400
+
+    result = insert_data(data)
+    return {"message": result}
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80, debug=True)

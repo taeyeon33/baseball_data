@@ -1,4 +1,4 @@
-import { fetchAllTables, fetchAllPlayers } from "../api/admin_api.js";
+import { fetchAllTables, fetchAllPlayers, fetchInsertData } from "../api/admin_api.js";
 import { logout } from "../api/auth.js";
 
 let tableList = [];
@@ -84,8 +84,6 @@ class Admin {
 
     loadDataModal(menu) {
         const { tableList } = this;
-        console.log(this.nowTab);
-        console.log(this.tableList[menu]);
 
         const data = tableList[menu];
 
@@ -93,7 +91,6 @@ class Admin {
         modalForm.innerHTML = "";
 
         data.forEach(col => {
-            // if (col.name.indexOf("id") != -1) return;
             const div = document.createElement("div");
             div.classList.add("col-md-4");
             const label = document.createElement("label");
@@ -105,6 +102,7 @@ class Admin {
             input.id = col.name;
             if (col.type == "TEXT") input.type = "TEXT";
             else if (col.type == "INTEGER") input.type = "number";
+            else if (col.type == "date") input.type = "date";
 
             div.appendChild(label);
             div.appendChild(input);
@@ -140,6 +138,34 @@ class Admin {
             if (this.modalState === "insert") this.insertData();
             else if (this.modalState === "update") this.updateData();
         });
+    }
+
+    // 데이터 추가, 변경, 삭제
+    async insertData() {
+        const jsonData = { "table": this.nowTab };
+
+        const inputs = document.querySelectorAll("#modalForm input");
+        inputs.forEach(input => {
+            const key = input.id;
+            jsonData[key] = input.value.trim();
+        });
+
+        const insert = await fetchInsertData(jsonData);
+        if (typeof insert.message !== "number") {
+            alert(insert.message);
+            return;
+        }
+
+        inputs.forEach(input => { input.value = ""; });
+        dataModal.style.display = "none";
+    }
+
+    updateData() {
+
+    }
+
+    deleteData() {
+
     }
 
     // 테이블 로딩
