@@ -76,7 +76,7 @@ header button {
 /* 메인 콘텐츠 */
 
 main {
-    height: calc(100vh - 70px - 50px - 3rem);
+    min-height: calc(100vh - 70px - 50px - 3rem);
 }
 
 .select-form {
@@ -244,4 +244,14 @@ footer {
     background-color: var(--card-bg);
     border-radius: 5px;
     overflow: hidden;
+}
+
+#dataManagement table tr {
+    overflow-x: auto;
+}
+
+#dataManagement table th,
+#dataManagement table td {
+    white-space: nowrap;
+    min-width: 70px;
 }

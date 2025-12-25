@@ -1,7 +1,5 @@
-import { fetchAllTables, fetchAllPlayers, fetchInsertData } from "../api/admin_api.js";
+import { fetchAllTables, fetchDataList, fetchUpdateData, fetchDeleteData } from "../api/admin_api.js";
 import { logout } from "../api/auth.js";
-
-let tableList = [];
 
 class Admin {
     constructor() {
@@ -14,8 +12,7 @@ class Admin {
             "games", "scores"
         ]
 
-        this.dataModalList = [];
-
+        this.dataModal = document.querySelector("#dataModal");
         this.modalState = "";
 
         this.init();
@@ -25,7 +22,6 @@ class Admin {
         let tables = await fetchAllTables();
         if (typeof tables == "string") tables = JSON.parse(tables);
         this.tableList = tables;
-        console.log(this.tableList);
 
         this.logoutEvent();
         
@@ -41,11 +37,10 @@ class Admin {
         navTabs.innerHTML = "";
 
         tableMenuList.forEach(menu => {
-            // const table = tableList[name];
             this.tabItemDom(menu);
         });
 
-        this.loadPlayers();
+        this.loadTable();
         this.loadDataModal("players");
     }
 
@@ -78,7 +73,7 @@ class Admin {
             tableTitle.innerHTML = e.target.innerHTML;
             modalTitle.innerHTML = e.target.innerHTML;
             this.loadDataModal(menu);
-            this.renderTable();
+            this.loadTable();
         });
     }
 
@@ -103,6 +98,10 @@ class Admin {
             if (col.type == "TEXT") input.type = "TEXT";
             else if (col.type == "INTEGER") input.type = "number";
             else if (col.type == "date") input.type = "date";
+            if (col.notnull) {
+                input.placeholder = "필수";
+                input.required = true;
+            }
 
             div.appendChild(label);
             div.appendChild(input);
@@ -135,13 +134,12 @@ class Admin {
 
         updateBtn.addEventListener("click", e => {
             e.preventDefault();
-            if (this.modalState === "insert") this.insertData();
-            else if (this.modalState === "update") this.updateData();
+            this.updateData();
         });
     }
 
     // 데이터 추가, 변경, 삭제
-    async insertData() {
+    async updateData() {
         const jsonData = { "table": this.nowTab };
 
         const inputs = document.querySelectorAll("#modalForm input");
@@ -150,32 +148,108 @@ class Admin {
             jsonData[key] = input.value.trim();
         });
 
-        const insert = await fetchInsertData(jsonData);
-        if (typeof insert.message !== "number") {
-            alert(insert.message);
+        const update = await fetchUpdateData(jsonData, this.modalState);
+        if (typeof update.message !== "number") {
+            alert(update.message);
             return;
         }
 
         inputs.forEach(input => { input.value = ""; });
         dataModal.style.display = "none";
+        this.loadTable();
     }
 
-    updateData() {
+    async deleteData(data) {
+        data["table"] = this.nowTab;
 
-    }
+        if (confirm("정말 삭제하시겠습니까?")) {
+            const del = await fetchDeleteData(data);
+            if (del.message !== 1) alert(del.message);
 
-    deleteData() {
-
+            this.loadTable();
+        }
     }
 
     // 테이블 로딩
-    async loadPlayers() {
-        const players = await fetchAllPlayers();
-        this.renderTable(players);
+    async loadTable() {
+        const jsonData = { "table": this.nowTab };
+        const dataList = await fetchDataList(jsonData);
+        this.renderTable(dataList);
     }
 
     renderTable(dataList) {
-        console.log("render table", dataList);
+        const tableThead = document.querySelector("#tableThead");
+        tableThead.innerHTML = "";
+
+        this.tableList[this.nowTab].forEach(col => {
+            if (col.name === "first_name") col.name = "name";
+            if (col.name === "last_name") return;
+            const th = document.createElement("th");
+            th.innerHTML = col.name;
+            tableThead.appendChild(th);
+        });
+        const th = document.createElement("th");
+        th.innerHTML = "관리";
+        tableThead.appendChild(th);
+        
+        const tableTbody = document.querySelector("#tableTbody");
+        tableTbody.innerHTML = "";
+
+        if (dataList[0] == undefined) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td colspan="100">데이터가 존재하지 않습니다.</td>`;
+            tableTbody.appendChild(tr);
+            return;
+        }
+
+        const columns = tableThead.querySelectorAll("th");
+        dataList.forEach(data => {
+            const tr = document.createElement("tr");
+            for (let i = 0; i < columns.length - 1; i++) {
+                const td = document.createElement("td");
+                const col = columns[i].innerHTML;
+                let innerData = data[col];
+                if (col === "name") innerData = `${data["last_name"]} ${data["first_name"]}`;
+                td.innerHTML = innerData;
+                tr.appendChild(td);
+            }
+
+            const td = document.createElement("td");
+            const div = document.createElement("div");
+            div.classList.add("d-flex", "justify-content-center", "gap-1");
+
+            const updateBtn = document.createElement("button");
+            updateBtn.classList.add("btn", "btn-sm", "btn-outline-primary", "border-0", "p-1");
+            updateBtn.innerHTML = `<i class="bi bi-pencil-square"></i>`;
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.classList.add("btn", "btn-sm", "btn-outline-danger", "border-0", "p-1");
+            deleteBtn.innerHTML = `<i class="bi bi-trash3-fill"></i>`;
+
+            this.managementBtnEvent(updateBtn, deleteBtn, data);
+
+            div.append(updateBtn, deleteBtn);
+            td.appendChild(div);
+            tr.appendChild(td);
+
+            tableTbody.appendChild(tr);
+        });
+    }
+
+    managementBtnEvent(updateBtn, deleteBtn, data) {
+        const { dataModal } = this;
+
+        updateBtn.addEventListener("click", e => {
+            this.modalState = "update";
+            const inputs = document.querySelectorAll("#modalForm input");
+            inputs.forEach(input => { input.value = data[input.id]; });
+
+            dataModal.style.display = "flex";
+        });
+
+        deleteBtn.addEventListener("click", async e => {
+            this.deleteData(data);
+        });
     }
 
     // 로그아웃 이벤트
@@ -203,81 +277,3 @@ class Admin {
 }
 
 const admin = new Admin();
-
-// async function loadTables() {
-//     let data = await fetchAllTables();
-//     if (typeof data == "string") data = JSON.parse(data);
-//     tableList = data;
-// }
-
-// console.log(tableList);
-
-// async function loadPlayers() {
-//     const players = await fetchAllPlayers();
-//     renderTable(players);
-// }
-
-// loadTables();
-// loadPlayers();
-
-// const tableThead = document.querySelector("#tableThead");
-// const tableTbody = document.querySelector("#tableTbody");
-
-// function renderTabs(tableList) {
-//     if (typeof tableList == "string") tableList = JSON.parse(tableList);
-//     console.log(tableList);
-// }
-
-// function renderTable(dataList) {
-//     console.log(dataList);
-// }
-
-// const currentTableTitle = document.querySelector("#currentTableTitle");
-// const dataInsertBtn = document.querySelector("#dataInsertBtn");
-
-// const dataModal = document.querySelector("#dataModal");
-// const modalTitle = document.querySelector("#modalTitle");
-// const closeBtn = document.querySelector("#closeBtn");
-// const modalForm = document.querySelector("#modalForm");
-// const cancelBtn = document.querySelector("#cancelBtn");
-// const updateBtn = document.querySelector("#updateBtn");
-
-// dataInsertBtn.addEventListener("click", e => {
-//     dataModal.style.display = "flex";
-//     modalTitle.innerHTML = "선수 추가";
-// });
-
-// closeBtn.addEventListener("click", e => {
-//     dataModal.style.display = "none";
-// });
-
-// cancelBtn.addEventListener("click", e => {
-//     const inputs = document.querySelectorAll("#modalForm input");
-//     inputs.forEach(input => { input.value = ""; });
-//     dataModal.style.display = "none";
-// });
-
-// updateBtn.addEventListener("click", e => {
-//     e.preventDefault();
-// });
-
-
-// const logoutBtn = document.querySelector("#logoutBtn");
-// logoutBtn.addEventListener("click", async e => {
-//     e.preventDefault();
-
-//     let res, data;
-//     try {
-//         ({ res, data } = await logout());
-//     } catch (e) {
-//         alert("네트워크 오류");
-//         return;
-//     }
-
-//     if (res.status !== 200) {
-//         alert(data.message || "서버 오류");
-//         return;
-//     }
-
-//     location.href = "/"
-// });

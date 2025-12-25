@@ -14,15 +14,12 @@ def fetch_all_tables():
 
     return schema
 
-def fetch_all_players():
+def fetch_data_list(table):
     conn = get_connection()
     cur = conn.cursor()
 
-    rows = cur.execute(
-        """
-        SELECT * FROM players ORDER BY last_name
-        """
-    ).fetchall()
+    sql = f"SELECT * FROM {table} ORDER BY 1 DESC"
+    rows = cur.execute(sql).fetchall()
     
     conn.close()
     return rows
@@ -84,3 +81,53 @@ def insert_row(table, rows):
 
     conn.close()
     return idx
+
+def get_data(table, rows):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    where_clause = " AND ".join([f"{k} = ?" for k, v in rows.items()])
+    values = list(rows.values())
+
+    sql = f"SELECT * FROM {table} WHERE {where_clause}"
+
+    data = cur.execute(sql, values).fetchone()
+    conn.commit()
+
+    conn.close()
+    return data
+
+def update_row(table, set_rows, where_rows):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    set_clause = ", ".join([f"{k} = ?" for k, v in set_rows.items()])
+    where_clause = " AND ".join([f"{k} = ?" for k, v in where_rows.items()])
+
+    sql = f"UPDATE {table} SET {set_clause} WHERE {where_clause}"
+    params = tuple(set_rows.values()) + tuple(where_rows.values())
+
+    cur.execute(sql, params)
+    conn.commit()
+
+    cnt = cur.rowcount
+
+    conn.close()
+    return cnt
+
+def delete_row(table, rows):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    where_clause = " AND ".join([f"{k} = ?" for k, v in rows.items()])
+    values = list(rows.values())
+
+    sql = f"DELETE FROM {table} WHERE {where_clause}"
+
+    cur.execute(sql, values)
+    conn.commit()
+
+    cnt = cur.rowcount
+
+    conn.close()
+    return cnt    

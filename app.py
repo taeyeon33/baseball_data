@@ -6,7 +6,7 @@ import os
 from src.db.connect import get_connection
 from src.config import UI_DIR, CSS_DIR, JS_DIR
 
-from src.services.admin_service import get_all_tables, get_all_players, insert_data
+from src.services.admin_service import get_all_tables, get_data_list, insert_data, update_data, delete_data
 
 app = Flask(__name__)
 
@@ -73,11 +73,15 @@ def api_admin_tables():
     return jsonify(tables)
 
 # 선수 목록 데이터
-@app.route("/api/admin/players", methods=["POST"])
+@app.route("/api/admin/datalist", methods=["POST"])
 @admin_required
-def api_admin_players():
-    players = get_all_players()
-    return jsonify(players)
+def api_admin_dataList():
+    data = request.json
+    if not data or "table" not in data:
+        return jsonify({"message": "데이터 형식이 올바르지 않습니다."}), 400
+    
+    dataList = get_data_list(data)
+    return jsonify(dataList)
 
 @app.route("/api/admin/insert", methods=["POST"])
 @admin_required
@@ -87,6 +91,26 @@ def api_admin_insert():
         return jsonify({"message": "데이터 형식이 올바르지 않습니다."}), 400
 
     result = insert_data(data)
+    return {"message": result}
+
+@app.route("/api/admin/update", methods=["POST"])
+@admin_required
+def api_admin_update():
+    data = request.json
+    if not data or "table" not in data:
+        return jsonify({"message": "데이터 형식이 올바르지 않습니다."}), 400
+    
+    result = update_data(data)
+    return {"message": result}
+
+@app.route("/api/admin/delete", methods=["POST"])
+@admin_required
+def api_admin_delete():
+    data = request.json
+    if not data or "table" not in data:
+        return jsonify({"message": "데이터 형식이 올바르지 않습니다."}), 400
+    
+    result = delete_data(data)
     return {"message": result}
 
 if __name__ == "__main__":
