@@ -3,7 +3,6 @@ from functools import wraps
 # import subprocess
 import os
 
-from src.db.connect import get_connection
 from src.config import UI_DIR, CSS_DIR, JS_DIR
 
 from src.services.admin_service import get_all_tables, get_data_list, insert_data, update_data, delete_data
@@ -69,8 +68,18 @@ def admin_page():
 @app.route("/api/admin/tables", methods=["POST"])
 @admin_required
 def api_admin_tables():
-    tables = get_all_tables()
-    return jsonify(tables)
+    try:
+        tables = get_all_tables()
+        return jsonify(tables)
+    
+    except ValueError as e:
+        return jsonify({"message": str(e)}), 400
+    
+    except RuntimeError as e:
+        return jsonify({"message": str(e)}), 500
+    
+    except Exception as e:
+        return jsonify({"message": "알 수 없는 오류가 발생했습니다."}), 500
 
 # 선수 목록 데이터
 @app.route("/api/admin/datalist", methods=["POST"])
@@ -80,8 +89,18 @@ def api_admin_dataList():
     if not data or "table" not in data:
         return jsonify({"message": "데이터 형식이 올바르지 않습니다."}), 400
     
-    dataList = get_data_list(data)
-    return jsonify(dataList)
+    try:
+        dataList = get_data_list(data)
+        return jsonify(dataList)
+    
+    except ValueError as e:
+        return jsonify({"message": str(e)}), 400
+    
+    except RuntimeError as e:
+        return jsonify({"message": str(e)}), 500
+    
+    except Exception as e:
+        return jsonify({"message": "알 수 없는 오류가 발생했습니다."}), 500
 
 @app.route("/api/admin/insert", methods=["POST"])
 @admin_required
@@ -90,8 +109,18 @@ def api_admin_insert():
     if not data or "table" not in data:
         return jsonify({"message": "데이터 형식이 올바르지 않습니다."}), 400
 
-    result = insert_data(data)
-    return {"message": result}
+    try:
+        result = insert_data(data)
+        return {"message": result}
+    
+    except ValueError as e:
+        return jsonify({"message": str(e)}), 400
+    
+    except RuntimeError as e:
+        return jsonify({"message": str(e)}), 500
+    
+    except Exception as e:
+        return jsonify({"message": "알 수 없는 오류가 발생했습니다."}), 500
 
 @app.route("/api/admin/update", methods=["POST"])
 @admin_required
@@ -100,8 +129,18 @@ def api_admin_update():
     if not data or "table" not in data:
         return jsonify({"message": "데이터 형식이 올바르지 않습니다."}), 400
     
-    result = update_data(data)
-    return {"message": result}
+    try:
+        result = update_data(data)
+        return {"message": result}
+    
+    except ValueError as e:
+        return jsonify({"message": str(e)}), 400
+    
+    except RuntimeError as e:
+        return jsonify({"message": str(e)}), 500
+    
+    except Exception as e:
+        return jsonify({"message": "알 수 없는 오류가 발생했습니다."}), 500
 
 @app.route("/api/admin/delete", methods=["POST"])
 @admin_required
@@ -110,8 +149,18 @@ def api_admin_delete():
     if not data or "table" not in data:
         return jsonify({"message": "데이터 형식이 올바르지 않습니다."}), 400
     
-    result = delete_data(data)
-    return {"message": result}
+    try:
+        result = delete_data(data)
+        return {"message": result}
+    
+    except ValueError as e:
+        return jsonify({"message": str(e)}), 400
+    
+    except RuntimeError as e:
+        return jsonify({"message": str(e)}), 500
+    
+    except Exception as e:
+        return jsonify({"message": "알 수 없는 오류가 발생했습니다."}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80, debug=True)

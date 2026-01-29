@@ -9,10 +9,10 @@ def get_all_tables():
 def get_data_list(data):
     table = data["table"]
     if not table:
-        return "테이블이 존재하지 않습니다."
+        raise ValueError("테이블이 존재하지 않습니다.")
     
     if not table_exists("one", table):
-        return "테이블이 존재하지 않습니다."
+        raise ValueError("테이블이 존재하지 않습니다.")
     
     rows = fetch_data_list(table)
 
@@ -29,10 +29,10 @@ def get_data_list(data):
 def insert_data(data):
     table = data["table"]
     if not table:
-        return "테이블이 존재하지 않습니다."
+        raise ValueError("테이블이 존재하지 않습니다.")
     
     if not table_exists("one", table):
-        return "테이블이 존재하지 않습니다."
+        raise ValueError("테이블이 존재하지 않습니다.")
     
     columns = get_columns(table)
     valid_columns = {col["name"] for col in columns}
@@ -44,7 +44,7 @@ def insert_data(data):
     }
 
     if not rows:
-        return "컬럼이 존재하지 않습니다."
+        raise ValueError("컬럼이 존재하지 않습니다.")
 
     result = insert_row(table, rows)
     return result
@@ -52,10 +52,10 @@ def insert_data(data):
 def update_data(data):
     table = data["table"]
     if not table:
-        return "테이블이 존재하지 않습니다."
+        raise ValueError("테이블이 존재하지 않습니다.")
     
     if not table_exists("one", table):
-        return "테이블이 존재하지 않습니다."
+        raise ValueError("테이블이 존재하지 않습니다.")
 
     rows = {
         k: v
@@ -65,7 +65,7 @@ def update_data(data):
 
     select_data = get_data(table, rows)
     if select_data is None:
-        return "수정할 데이터가 존재하지 않습니다."
+        raise ValueError("수정할 데이터가 존재하지 않습니다.")
     
     updateCol = {
         k: v
@@ -80,10 +80,10 @@ def update_data(data):
 def delete_data(data):
     table = data["table"]
     if not table:
-        return "테이블이 존재하지 않습니다."
+        raise ValueError("테이블이 존재하지 않습니다.")
     
     if not table_exists("one", table):
-        return "테이블이 존재하지 않습니다."
+        raise ValueError("테이블이 존재하지 않습니다.")
 
     rows = {
         k: v
@@ -93,7 +93,7 @@ def delete_data(data):
 
     select_data = get_data(table, rows)
     if select_data is None:
-        return "삭제할 데이터가 존재하지 않습니다."
+        raise ValueError("삭제할 데이터가 존재하지 않습니다.")
     
     result = delete_row(table, rows)
     return result

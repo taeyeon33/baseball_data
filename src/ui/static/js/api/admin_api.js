@@ -13,6 +13,7 @@ async function request(url, options = {}) {
 
     if (!res.ok) {
         const text = await res.text();
+        alert(`${res.status} ${text}`);
         throw new Error(`${res.status} ${text}`);
     }
 

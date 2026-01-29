@@ -24,7 +24,7 @@ class Admin {
         this.tableList = tables;
 
         this.logoutEvent();
-        
+
         this.renderTab();
         this.modalEvent();
         // this.loadFilterModal();
@@ -64,7 +64,7 @@ class Admin {
     tabEvent(button, menu) {
         const tableTitle = document.querySelector("#currentTableTitle");
         const modalTitle = document.querySelector("#modalTitle");
-        
+
         button.addEventListener("click", e => {
             const tabBtnList = document.querySelectorAll("#navTabs .nav-link");
             tabBtnList.forEach(item => { item.classList.remove("active"); });
@@ -184,14 +184,19 @@ class Admin {
         this.tableList[this.nowTab].forEach(col => {
             if (col.name === "first_name") col.name = "name";
             if (col.name === "last_name") return;
+            if (this.nowTab === "player_names") {
+                if (col.name.split("_")[1] === "first") col.name = col.name.split("_")[0] + "_name";
+                if (col.name.split("_")[1] === "last") return;
+            }
             const th = document.createElement("th");
             th.innerHTML = col.name;
             tableThead.appendChild(th);
         });
+
         const th = document.createElement("th");
         th.innerHTML = "관리";
         tableThead.appendChild(th);
-        
+
         const tableTbody = document.querySelector("#tableTbody");
         tableTbody.innerHTML = "";
 
@@ -210,6 +215,7 @@ class Admin {
                 const col = columns[i].innerHTML;
                 let innerData = data[col];
                 if (col === "name") innerData = `${data["last_name"]} ${data["first_name"]}`;
+                if (col.indexOf("_name") != -1) innerData = `${data[col.split("_")[0] + "_last_name"]}・${data[col.split("_")[0] + "_first_name"]}`;
                 td.innerHTML = innerData;
                 tr.appendChild(td);
             }
