@@ -14,14 +14,18 @@ def fetch_all_tables():
 
     return schema
 
-def fetch_data_list(table):
+def fetch_data_list(table, options=None):
     conn = get_connection()
     try:
         cur = conn.cursor()
 
         sql = f"SELECT * FROM {table} ORDER BY 1 DESC"
+        if options and options.get("player_name"):
+            sql = f"SELECT p.last_name, p.first_name, t.* FROM players AS p JOIN {table} AS t ON p.player_id = t.player_id ORDER BY t.player_id DESC"
+        if options and options.get("positions"):
+            sql = f"SELECT * FROM {table} ORDER BY position_number ASC"
         rows = cur.execute(sql).fetchall()
-        
+        print(sql)
         return rows
     
     except sqlite3.Error as e:

@@ -14,7 +14,13 @@ def get_data_list(data):
     if not table_exists("one", table):
         raise ValueError("테이블이 존재하지 않습니다.")
     
-    rows = fetch_data_list(table)
+    options = None
+    if "player_team_history" in table or "player_positions" in table:
+        options = {"player_name": True}
+    if (table == "positions"):
+        options = {"positions": True}
+    
+    rows = fetch_data_list(table, options=options)
 
     return [dict(row) for row in rows]
     return [

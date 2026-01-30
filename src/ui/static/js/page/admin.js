@@ -1,16 +1,24 @@
 import { fetchAllTables, fetchDataList, fetchUpdateData, fetchDeleteData } from "../api/admin_api.js";
 import { logout } from "../api/auth.js";
 
+const log = console.log;
+
 class Admin {
     constructor() {
         this.tableList = [];
+        this.playerList = [];
 
         this.nowTab = "players";
         this.tableMenuList = [
             "players", "player_names", "player_team_history", "player_positions",
-            "leagues", "seasons", "stadiums", "positions", "details", "detail_translations",
+            "leagues", "teams", "divisions", "seasons", "stadiums", "positions", "details", "detail_translations",
             "games", "scores"
         ]
+        this.koTableMenuList = [
+            "선수", "P_이름", "P_팀_이력", "P_포지션",
+            "리그", "팀", "디비전", "시즌", "구장", "포지션", "정보", "정보_번역",
+            "경기", "스코어"
+        ];
 
         this.dataModal = document.querySelector("#dataModal");
         this.modalState = "";
@@ -22,7 +30,7 @@ class Admin {
         let tables = await fetchAllTables();
         if (typeof tables == "string") tables = JSON.parse(tables);
         this.tableList = tables;
-
+        
         this.logoutEvent();
 
         this.renderTab();
@@ -36,15 +44,15 @@ class Admin {
         const navTabs = document.querySelector("#navTabs");
         navTabs.innerHTML = "";
 
-        tableMenuList.forEach(menu => {
-            this.tabItemDom(menu);
+        tableMenuList.forEach((menu, idx) => {
+            this.tabItemDom(menu, idx);
         });
 
         this.loadTable();
         this.loadDataModal("players");
     }
 
-    tabItemDom(menu) {
+    tabItemDom(menu, idx) {
         const navTabs = document.querySelector("#navTabs");
 
         const li = document.createElement("li");
@@ -52,8 +60,7 @@ class Admin {
         const button = document.createElement("button");
         button.classList.add("nav-link", "px-3");
         if (menu == "players") button.classList.add("active");
-        let text = menu;
-        if (menu.indexOf("_") != -1) text = `${menu.slice(0, 1)}_${menu.split("_")[1]}`;
+        let text = this.koTableMenuList[idx];
         button.innerHTML = text;
         li.appendChild(button);
         navTabs.appendChild(li);
@@ -181,12 +188,21 @@ class Admin {
         const tableThead = document.querySelector("#tableThead");
         tableThead.innerHTML = "";
 
+        if (this.nowTab === "player_team_history" || this.nowTab === "player_positions") {
+            const th = document.createElement("th");
+            th.innerHTML = "player_id";
+            tableThead.appendChild(th);
+        }
+
         this.tableList[this.nowTab].forEach(col => {
             if (col.name === "first_name") col.name = "name";
             if (col.name === "last_name") return;
             if (this.nowTab === "player_names") {
                 if (col.name.split("_")[1] === "first") col.name = col.name.split("_")[0] + "_name";
                 if (col.name.split("_")[1] === "last") return;
+            }
+            if (this.nowTab === "player_team_history" || this.nowTab === "player_positions") {
+                if (col.name === "player_id") col.name = "name";
             }
             const th = document.createElement("th");
             th.innerHTML = col.name;
@@ -215,7 +231,7 @@ class Admin {
                 const col = columns[i].innerHTML;
                 let innerData = data[col];
                 if (col === "name") innerData = `${data["last_name"]} ${data["first_name"]}`;
-                if (col.indexOf("_name") != -1) innerData = `${data[col.split("_")[0] + "_last_name"]}・${data[col.split("_")[0] + "_first_name"]}`;
+                if (this.nowTab === "player_names" && col.indexOf("_name") != -1) innerData = `${data[col.split("_")[0] + "_last_name"]} &middot; ${data[col.split("_")[0] + "_first_name"]}`;
                 td.innerHTML = innerData;
                 tr.appendChild(td);
             }
