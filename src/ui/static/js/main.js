@@ -2,26 +2,23 @@ const log = console.log;
 
 // 컬러 템플릿
 const html = document.documentElement;
-const prefersColor = window.matchMedia("(prefers-color-scheme: dark)").matches;
-let nowTheme = "dark";
+const prefersColor = window.matchMedia("(prefers-color-scheme: light)").matches;
+let nowTheme = localStorage.getItem("theme");
 
-if (!prefersColor) {
-    html.setAttribute("data-bs-theme", "dark");
-    nowTheme = "dark";
+if (nowTheme !== null) {
+    html.setAttribute("data-bs-theme", nowTheme);
 } else {
-    html.setAttribute("data-bs-theme", "light");
-    nowTheme = "light";
+    nowTheme = prefersColor ? "light" : "dark";
+    html.setAttribute("data-bs-theme", nowTheme);
+    localStorage.setItem("theme", nowTheme);
 }
 
 const themeBtn = document.querySelector("#themeBtn");
 themeBtn.addEventListener("click", e => {
-    if (nowTheme == "dark") {
-        html.setAttribute("data-bs-theme", "light");
-        nowTheme = "light";
-    } else if (nowTheme == "light") {
-        html.setAttribute("data-bs-theme", "dark");
-        nowTheme = "dark";
-    }
+    if (nowTheme == "dark") nowTheme = "light";
+    else if (nowTheme == "light") nowTheme = "dark";
+    html.setAttribute("data-bs-theme", nowTheme);
+    localStorage.setItem("theme", nowTheme);
 });
 
 // header 버튼

@@ -38,6 +38,7 @@ class Admin {
         // this.loadFilterModal();
     }
 
+    // 탭 렌더링
     renderTab() {
         const { tableMenuList } = this;
 
@@ -84,6 +85,7 @@ class Admin {
         });
     }
 
+    // 모달 폼 로딩
     loadDataModal(menu) {
         const { tableList } = this;
 

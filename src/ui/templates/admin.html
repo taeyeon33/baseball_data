@@ -16,6 +16,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+    <!-- Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
+    <!-- 커스텀 CSS -->
     <link rel="stylesheet" href="/static/css/style.css">
     <title>NPB Stats</title>
 </head>
@@ -39,11 +45,24 @@
 
     <main class="container-fluid px-5 py-3 my-4">
         <div id="dataManagement">
-            <div class="card shadow-sm border-0 overflow-hidden">
+            <div class="card shadow border-0 overflow-hidden">
                 <div class="card-header bg-transparent p-0 border-bottom border-secandary-subtle">
                     <div class="d-flex justify-content-between align-items-center bg-card-bg px-4 py-3">
                         <h3 id="currentTableTitle" class="fw-bold fs-4 mb-0">players</h3>
                         <div class="d-flex gap-3">
+                            <div class="d-flex gap-2 align-items-center me-2">
+                                <label for="crawlDate" class="small text-body-secondary fw-bold">크롤링 기간: </label>
+                                <div class="date-selector input-group input-group-sm">
+                                    <span class="input-group-text bg-transparent border-secondary-subtle text-primary border-end-0">
+                                        <i class="bi bi-calendar3"></i>
+                                    </span>
+                                    <input type="text" id="crawlDate" class="form-control border-secondary-subtle bg-transparent text-center border-start-0 ps-0" placeholder="기간 선택" readonly>
+                                </div>
+                                <button id="crawlBtn" class="btn btn-sm px-3 shadow-sm d-flex align-items-center gap-1">
+                                    <i class="bi bi-rocket-takeoff-fill"></i>
+                                    <span>데이터 가져오기</span>
+                                </button>
+                            </div>
                             <button id="dataInsertBtn" class="btn btn-outline-primary btn-sm">데이터 추가</button>
                             <button id="dataFilter" class="btn btn-outline-info btn-sm">필터</button>
                         </div>
@@ -94,6 +113,8 @@
     
     <script src="/static/js/main.js"></script>
     <script type="module" src="/static/js/page/admin.js"></script>
+    <script type="module" src="/static/js/page/crawl_popup.js"></script>
+    <script src="/static/js/page/flatpickr.js"></script>
 </body>
 
 </html>

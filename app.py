@@ -64,6 +64,13 @@ def admin_page():
         return redirect("/login")
     return send_from_directory(UI_DIR, "admin.html")
 
+# 관리자 페이지 팝업
+@app.route("/admin/crawl_popup")
+def admin_crawl_popup():
+    if not session.get("is_admin"):
+        return redirect("/login")
+    return send_from_directory(UI_DIR, "crawl_popup.html")
+
 # 테이블 목록 데이터
 @app.route("/api/admin/tables", methods=["POST"])
 @admin_required

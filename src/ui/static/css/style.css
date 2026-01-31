@@ -1,5 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
+:root {
+    --date-selector-focus: #6e8efb;
+    --date-selector-range: #8c9eff;
+    --date-selector-shadow-1: rgba(110, 142, 251, .1);
+    --date-selector-shadow-4: rgba(110, 142, 251, .4);
+    --gradient-3: linear-gradient(135deg, #6e8efb 0%, #a777e3 50%, #fbc2eb 100%);
+    --gradient-2: linear-gradient(135deg, #6e8efb 0%, #a777e3 100%);
+    --gradient-var: linear-gradient(90deg, #6e8efb, #a777e3);
+}
+
 [data-bs-theme="dark"] {
     --bs-body-bg: #121212;
     --bs-body-color: #e0e0e0;
@@ -7,6 +17,11 @@
     --table-header-bg: #1f1f1f;
     --card-bg: #1e1e1e;
     --hover-bg: rgba(255, 255, 255, 0.05);
+
+    --calendar-bg: #1a1a1b;
+    --calendar-border: rgba(255, 255, 255, 0.1);
+    --calendar-text: #ffffff;
+    --calendar-weekday: rgba(255, 255, 255, 0.3);
 }
 
 [data-bs-theme="light"] {
@@ -16,6 +31,11 @@
     --table-header-bg: #f8f9fa;
     --card-bg: #ffffff;
     --hover-bg: rgba(0, 0, 0, 0.03);
+
+    --calendar-bg: #ffffff;
+    --calendar-border: rgba(0, 0, 0, 0.1);
+    --calendar-text: #212529;
+    --calendar-weekday: rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -44,12 +64,13 @@ a {
 header {
     height: 70px;
     background-color: var(--card-bg);
+    border-bottom: 1px solid var(--bs-border-color);
 }
 
 .logo {
     font-size: 24px;
     font-weight: 900;
-    background: linear-gradient(135deg, #6e8efb 0%, #a777e3 50%, #fbc2eb 100%);
+    background: var(--gradient-3);
     background-clip: text;
     color: transparent;
 }
@@ -172,6 +193,7 @@ footer {
     justify-content: center;
     align-items: center;
     background-color: var(--card-bg);
+    border-top: 1px solid var(--bs-border-color);
 }
 
 /* player.html */
@@ -254,4 +276,206 @@ footer {
 #dataManagement table td {
     white-space: nowrap;
     min-width: 70px;
+}
+
+/* crawler */
+
+.date-selector {
+    width: 15rem;
+}
+
+#crawlBtn {
+    background: var(--gradient-2);
+    border: none;
+    transition: all .3s ease;
+    color: white;
+}
+
+/* crawler calendar */
+
+.flatpickr-calendar {
+    background: var(--calendar-bg);
+    border: 1px solid var(--calendar-border);
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.3);
+    border-radius: 1rem;
+    padding: 0.75rem;
+    width: 21rem;
+    margin-top: 0.375rem;
+}
+
+.date-selector:focus-within .input-group-text,
+.date-selector:focus-within .form-control {
+    border-color: var(--date-selector-focus) !important;
+    box-shadow: none;
+}
+
+.date-selector:focus-within .input-group-text {
+    color: var(--date-selector-focus);
+    background-color: var(--date-selector-shadow-1) !important;
+}
+
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-weekday,
+.numInputWrapper:hover {
+    background: none !important;
+}
+
+.flatpickr-months {
+    position: relative;
+    align-items: start;
+    padding: 0 0.5rem;
+}
+
+.flatpickr-months .flatpickr-month {
+    color: var(--calendar-text);
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    margin: 0 0.5rem;
+}
+
+.flatpickr-monthDropdown-month {
+    background-color: var(--calendar-bg) !important;
+    color: var(--calendar-text) !important;
+}
+
+.flatpickr-current-month {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+}
+
+.numInputWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.numInputWrapper span {
+    opacity: 1 !important;
+    border: var(--calendar-text);
+}
+
+.numInputWrapper .arrowUp::after {
+    border-bottom-color: var(--calendar-text) !important;
+}
+
+.numInputWrapper .arrowDown::after {
+    border-top-color: var(--calendar-text) !important;
+}
+
+.flatpickr-prev-month,
+.flatpickr-next-month {
+    fill: var(--calendar-text) !important;
+    margin-top: 0.25rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flatpickr-prev-month:hover,
+.flatpickr-next-month:hover {
+    background-color: var(--calendar-border);
+    border-radius: 0.5rem;
+}
+
+.flatpickr-prev-month:hover svg,
+.flatpickr-next-month:hover svg {
+    fill: var(--date-selector-focus) !important;
+}
+
+.flatpickr-weekdays {
+    margin: 0.5rem 0 0;
+}
+
+.flatpickr-weekday {
+    color: var(--calendar-text) !important;
+}
+
+.flatpickr-day {
+    border: none !important;
+    border-radius: 0.625rem !important;
+    font-size: 0.9rem;
+    color: var(--calendar-text) !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+    background: var(--gradient-2) !important;
+    color: white !important;
+    box-shadow: 0 0.25rem 0.75rem var(--date-selector-shadow-4) !important;
+}
+
+.flatpickr-day.startRange:not(.endRange) {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.flatpickr-day.endRange:not(.startRange) {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+.flatpickr-day.inRange,
+.flatpickr-day.prevMonthDay.inRange,
+.flatpickr-day.nextMonthDay.inRange {
+    background: var(--date-selector-shadow-1) !important;
+    box-shadow: -7px 0 0 var(--date-selector-shadow-1), 7px 0 0 var(--date-selector-shadow-1) !important;
+    color: var(--date-selector-range) !important;
+    border-radius: 0 !important;
+}
+
+.flatpickr-day:hover:not(.selected):not(.startRange):not(.endRange) {
+    background: transparent;
+}
+
+/* crawling popup */
+
+.popup-body {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    padding: 2rem;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.progress-container {
+    width: 100%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, .05);
+    border-radius: 0.625rem;
+    padding: 2rem;
+    box-shadow: 0 0.625rem 2rem rgba(0, 0, 0, .2);
+}
+
+.progress {
+    height: 0.75rem;
+    border-radius: 0.375rem;
+    background-color: rgba(255, 255, 255, .1);
+    margin: 1.5rem 0;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: var(--gradient-var);
+    transition: width .4s ease;
+}
+
+.status-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.count-badge {
+    font-size: 2rem;
+    font-weight: 800;
+    background: var(--gradient-2);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
 }

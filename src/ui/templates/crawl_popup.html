@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 부트스트랩 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
+    <!-- 아이콘 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- 구글 폰트 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- 커스텀 CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <title>크롤링 진행 상황</title>
+</head>
+
+<body class="popup-body">
+    <div class="progress-container text-center">
+        <h4 class="fw-bold mb-4">크롤링 진행 중</h4>
+
+        <div class="mb-4">
+            <span id="gameCount" class="count-badge">0</span>
+            <span class="fs-5 text-body-secondary">경기 수집됨</span>
+        </div>
+
+        <div class="progress">
+            <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;"></div>
+        </div>
+
+        <div id="statusText" class="status-text text-body-secondary">데이터 수집 준비 중...</div>
+
+        <div class="mt-4">
+            <button onclick="window.close()" class="btn btn-outline-secondary btn-sm px-4">창 닫기</button>
+        </div>
+    </div>
+
+    <script src="/static/js/page/crawl_popup.js"></script>
+</body>
+
+</html>
