@@ -1,5 +1,5 @@
 export async function login(password) {
-    const res = await fetch("/api/login", {
+    const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password })
@@ -10,7 +10,7 @@ export async function login(password) {
 }
 
 export async function logout() {
-    const res = await fetch("/api/logout", {
+    const res = await fetch("/api/admin/logout", {
         method: "POST",
         headers: { "Content-Type": "application/json" }
     });

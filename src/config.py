@@ -1,3 +1,5 @@
+import os
+
 BASE_DIR = "."
 
 UI_DIR = f"{BASE_DIR}/src/ui/templates"
@@ -13,3 +15,6 @@ DEFEAULT_HEADERS = {"User-Agent": "Mozilla/5.0"}
 REQUEST_TIMEOUT = 10
 
 ENCODING = "utf-8"
+
+SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "dev-secret-key")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "local-admin")

@@ -1,25 +1,19 @@
-from flask import Flask, request, session, jsonify, redirect, send_from_directory, abort
-from functools import wraps
-# import subprocess
-import os
+from flask import Flask, session, redirect, send_from_directory
 
-from src.config import UI_DIR, CSS_DIR, JS_DIR
+from src.config import UI_DIR, CSS_DIR, JS_DIR, SECRET_KEY
+from src.api import ALL_BLUEPRINTS
 
-from src.services.admin_service import get_all_tables, get_data_list, insert_data, update_data, delete_data
+def create_app():
+    app = Flask(__name__)
 
-app = Flask(__name__)
+    app.secret_key = SECRET_KEY
 
-app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-key")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "local-admin")
+    for bp in ALL_BLUEPRINTS:
+        app.register_blueprint(bp)
 
-# 관리자 인증
-def admin_required(fn):
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-        if not session.get("is_admin"):
-            abort(403, description="admin only")
-        return fn(*args, **kwargs)
-    return wrapper
+    return app
+
+app = create_app()
 
 # index.html
 @app.route("/")
@@ -43,20 +37,6 @@ def login_page():
         return redirect("/admin")
     return send_from_directory(UI_DIR, "login.html")
 
-# 로그인
-@app.route("/api/login", methods=["POST"])
-def login():
-    data = request.json or {}
-    if data.get("password") == ADMIN_PASSWORD:
-        session["is_admin"] = True
-        return {"message": "login success"}, 200
-    return {"message": "login fail"}, 401
-
-@app.route("/api/logout", methods=["POST"])
-def logout():
-    session.clear()
-    return {"message": "logout success"}, 200
-
 # 관리자 페이지
 @app.route("/admin")
 def admin_page():
@@ -70,104 +50,6 @@ def admin_crawl_popup():
     if not session.get("is_admin"):
         return redirect("/login")
     return send_from_directory(UI_DIR, "crawl_popup.html")
-
-# 테이블 목록 데이터
-@app.route("/api/admin/tables", methods=["POST"])
-@admin_required
-def api_admin_tables():
-    try:
-        tables = get_all_tables()
-        return jsonify(tables)
-    
-    except ValueError as e:
-        return jsonify({"message": str(e)}), 400
-    
-    except RuntimeError as e:
-        return jsonify({"message": str(e)}), 500
-    
-    except Exception as e:
-        return jsonify({"message": "알 수 없는 오류가 발생했습니다."}), 500
-
-# 선수 목록 데이터
-@app.route("/api/admin/datalist", methods=["POST"])
-@admin_required
-def api_admin_dataList():
-    data = request.json
-    if not data or "table" not in data:
-        return jsonify({"message": "데이터 형식이 올바르지 않습니다."}), 400
-    
-    try:
-        dataList = get_data_list(data)
-        return jsonify(dataList)
-    
-    except ValueError as e:
-        return jsonify({"message": str(e)}), 400
-    
-    except RuntimeError as e:
-        return jsonify({"message": str(e)}), 500
-    
-    except Exception as e:
-        return jsonify({"message": "알 수 없는 오류가 발생했습니다."}), 500
-
-@app.route("/api/admin/insert", methods=["POST"])
-@admin_required
-def api_admin_insert():
-    data = request.json
-    if not data or "table" not in data:
-        return jsonify({"message": "데이터 형식이 올바르지 않습니다."}), 400
-
-    try:
-        result = insert_data(data)
-        return {"message": result}
-    
-    except ValueError as e:
-        return jsonify({"message": str(e)}), 400
-    
-    except RuntimeError as e:
-        return jsonify({"message": str(e)}), 500
-    
-    except Exception as e:
-        return jsonify({"message": "알 수 없는 오류가 발생했습니다."}), 500
-
-@app.route("/api/admin/update", methods=["POST"])
-@admin_required
-def api_admin_update():
-    data = request.json
-    if not data or "table" not in data:
-        return jsonify({"message": "데이터 형식이 올바르지 않습니다."}), 400
-    
-    try:
-        result = update_data(data)
-        return {"message": result}
-    
-    except ValueError as e:
-        return jsonify({"message": str(e)}), 400
-    
-    except RuntimeError as e:
-        return jsonify({"message": str(e)}), 500
-    
-    except Exception as e:
-        return jsonify({"message": "알 수 없는 오류가 발생했습니다."}), 500
-
-@app.route("/api/admin/delete", methods=["POST"])
-@admin_required
-def api_admin_delete():
-    data = request.json
-    if not data or "table" not in data:
-        return jsonify({"message": "데이터 형식이 올바르지 않습니다."}), 400
-    
-    try:
-        result = delete_data(data)
-        return {"message": result}
-    
-    except ValueError as e:
-        return jsonify({"message": str(e)}), 400
-    
-    except RuntimeError as e:
-        return jsonify({"message": str(e)}), 500
-    
-    except Exception as e:
-        return jsonify({"message": "알 수 없는 오류가 발생했습니다."}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80, debug=True)

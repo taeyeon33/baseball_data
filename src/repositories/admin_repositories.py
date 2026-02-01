@@ -25,7 +25,7 @@ def fetch_data_list(table, options=None):
         if options and options.get("positions"):
             sql = f"SELECT * FROM {table} ORDER BY position_number ASC"
         rows = cur.execute(sql).fetchall()
-        print(sql)
+        
         return rows
     
     except sqlite3.Error as e:
