@@ -11,12 +11,12 @@ class Admin {
         this.nowTab = "players";
         this.tableMenuList = [
             "players", "player_names", "player_team_history", "player_positions",
-            "leagues", "teams", "divisions", "seasons", "stadiums", "positions", "details", "detail_translations",
+            "leagues", "teams", "divisions", "seasons", "stadiums", "stadium_names", "positions", "details", "detail_translations",
             "games", "scores"
         ]
         this.koTableMenuList = [
             "선수", "P_이름", "P_팀_이력", "P_포지션",
-            "리그", "팀", "디비전", "시즌", "구장", "포지션", "정보", "정보_번역",
+            "리그", "팀", "디비전", "시즌", "구장", "구장_이름", "포지션", "정보", "정보_번역",
             "경기", "스코어"
         ];
 
