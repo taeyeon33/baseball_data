@@ -95,6 +95,7 @@ class Admin {
         modalForm.innerHTML = "";
 
         data.forEach(col => {
+            if (col.primary_key && col.type === "INTEGER") return;
             const div = document.createElement("div");
             div.classList.add("col-md-4");
             const label = document.createElement("label");
@@ -197,17 +198,18 @@ class Admin {
         }
 
         this.tableList[this.nowTab].forEach(col => {
-            if (col.name === "first_name") col.name = "name";
+            let nameText = col.name;
+            if (col.name === "first_name") nameText = "name";
             if (col.name === "last_name") return;
             if (this.nowTab === "player_names") {
-                if (col.name.split("_")[1] === "first") col.name = col.name.split("_")[0] + "_name";
+                if (col.name.split("_")[1] === "first") nameText = col.name.split("_")[0] + "_name";
                 if (col.name.split("_")[1] === "last") return;
             }
             if (this.nowTab === "player_team_history" || this.nowTab === "player_positions") {
-                if (col.name === "player_id") col.name = "name";
+                if (col.name === "player_id") nameText = "name";
             }
             const th = document.createElement("th");
-            th.innerHTML = col.name;
+            th.innerHTML = nameText;
             tableThead.appendChild(th);
         });
 

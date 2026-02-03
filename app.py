@@ -6,6 +6,7 @@ from src.api import ALL_BLUEPRINTS
 def create_app():
     app = Flask(__name__)
 
+    app.config['JSON_AS_ASCII'] = False
     app.secret_key = SECRET_KEY
 
     for bp in ALL_BLUEPRINTS:

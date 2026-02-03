@@ -13,11 +13,12 @@ bp = Blueprint(
 def crawl_games():
     data = request.get_json(silent=True) or {}
 
+    league = "NPB"
     start_date = data.get("start_date")
     end_date = data.get("end_date")
     
     try:
-        job_id = start_games_crawl(start_date, end_date)
+        job_id = start_games_crawl(league, start_date, end_date)
         return jsonify({
             "job_id": job_id,
             "status": "running",

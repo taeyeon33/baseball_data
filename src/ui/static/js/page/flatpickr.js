@@ -51,6 +51,7 @@ class Flatpickr {
 
             if (window.crawlPopup) {
                 log("Crawl popup opened.");
+                log(dateRangeStr, startDate, endDate);
             } else {
                 alert("팝업 차단이 설정되어 있습니다. 팝업 차단을 해제해주세요.");
             }

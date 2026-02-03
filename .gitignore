@@ -1,4 +1,5 @@
 .env
+/data
 /test
 export_excel.py
 game_logs.xlsx

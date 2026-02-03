@@ -17,6 +17,9 @@ def start_games_crawl(start_date, end_date):
     if start_dt > end_dt:
         raise ValueError("시작 날짜는 마지막 날짜보다 이전 날짜여야 합니다.")
     
+    if start_dt.year != end_dt.year:
+        raise ValueError("같은 연도의 기간만 가능합니다.")
+    
     now = datetime.utcnow().isoformat()
 
     job_id = create_job(
@@ -35,78 +38,6 @@ def start_games_crawl(start_date, end_date):
             "--end-date", end_date
         ]
     )
-
-    """
-    src/
-    ├─ crawlers/
-    │   ├─ games.py              # job entry point
-    │   ├─ fetchers/
-    │   │   └─ npb_playbyplay.py
-    │   ├─ parsers/
-    │   │   ├─ npb_playbyplay_parser.py
-    │   │   └─ npb_event_parser.py
-    │   ├─ processors/
-    │   │   ├─ game_processor.py
-    │   │   └─ entity_resolver.py
-    │   └─ state/
-    │       └─ game_state.py
-    │
-    ├─ repositories/
-    │   ├─ game_repo.py
-    │   ├─ player_repo.py
-    │   ├─ detail_repo.py
-    │   └─ game_log_repo.py
-
-    """
-
-    """
-    src/
-    ├─ crawlers/
-    │   ├─ games.py                     # job entry (공통)
-    │
-    │   ├─ common/                      # 🔴 [NEW] 리그 공통 인터페이스
-    │   │   ├─ base_fetcher.py
-    │   │   ├─ base_parser.py
-    │   │   ├─ base_box_parser.py
-    │   │   └─ base_roster_parser.py
-    │
-    │   ├─ npb/                         # 🔴 [NEW] NPB 전용
-    │   │   ├─ fetchers/
-    │   │   │   ├─ playbyplay.py
-    │   │   │   ├─ box.py
-    │   │   │   └─ roster.py
-    │   │   │
-    │   │   ├─ parsers/
-    │   │   │   ├─ playbyplay_parser.py
-    │   │   │   ├─ event_parser.py
-    │   │   │   ├─ box_parser.py
-    │   │   │   └─ roster_parser.py
-    │   │   │
-    │   │   └─ resolver.py              # 🔴 [NEW] NPB URL / 페이지 해석
-    │
-    │   ├─ kbo/                         # 🔴 [NEW] KBO 전용
-    │   │   ├─ fetchers/
-    │   │   │   ├─ playbyplay.py
-    │   │   │   ├─ box.py
-    │   │   │   └─ roster.py
-    │   │   │
-    │   │   ├─ parsers/
-    │   │   │   ├─ playbyplay_parser.py
-    │   │   │   ├─ event_parser.py
-    │   │   │   ├─ box_parser.py
-    │   │   │   └─ roster_parser.py
-    │   │   │
-    │   │   └─ resolver.py              # 🔴 [NEW] KBO URL / 페이지 해석
-    │
-    │   ├─ processors/
-    │   │   ├─ game_processor.py
-    │   │   ├─ playbyplay_processor.py
-    │   │   ├─ box_processor.py
-    │   │   └─ entity_resolver.py
-    │
-    │   ├─ state/
-    │   │   └─ game_state.py
-    """
 
     mark_job_running(job_id, started_at=now)
 
