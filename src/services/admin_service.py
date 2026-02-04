@@ -66,7 +66,7 @@ def update_data(data):
     rows = {
         k: v
         for k, v in data.items()
-        if "id" in k or "code" in k
+        if "id" in k or ("code" in k and "team" not in k)
     }
 
     select_data = get_data(table, rows)

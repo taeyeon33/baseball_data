@@ -113,15 +113,15 @@ def get_data(table, rows):
     conn = get_connection()
     try:
         cur = conn.cursor()
-
+        
         where_clause = " AND ".join([f"{k} = ?" for k, v in rows.items()])
         values = list(rows.values())
 
         sql = f"SELECT * FROM {table} WHERE {where_clause}"
-
+        
         data = cur.execute(sql, values).fetchone()
         conn.commit()
-
+        
         return data
     
     except sqlite3.Error as e:
@@ -140,7 +140,7 @@ def update_row(table, set_rows, where_rows):
 
         sql = f"UPDATE {table} SET {set_clause} WHERE {where_clause}"
         params = tuple(set_rows.values()) + tuple(where_rows.values())
-
+        
         cur.execute(sql, params)
         conn.commit()
 

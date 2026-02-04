@@ -278,6 +278,16 @@ footer {
     min-width: 70px;
 }
 
+#dataModal input:read-only {
+    background-color: black;
+    color: black;
+    box-shadow: none !important;
+}
+
+#dataModal input:read-only::placeholder {
+    color: black !important;
+}
+
 /* crawler */
 
 .date-selector {
@@ -425,6 +435,11 @@ footer {
     box-shadow: -7px 0 0 var(--date-selector-shadow-1), 7px 0 0 var(--date-selector-shadow-1) !important;
     color: var(--date-selector-range) !important;
     border-radius: 0 !important;
+}
+
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+    color: rgba(255, 255, 255, .3) !important;
 }
 
 .flatpickr-day:hover:not(.selected):not(.startRange):not(.endRange) {

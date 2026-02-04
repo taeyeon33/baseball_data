@@ -1,7 +1,7 @@
 from datetime import datetime
 
 class NPBResolver:
-    def get_schedule_url(self, start_date, end_date):
+    def get_schedule_urls(self, start_date, end_date):
         start_date = datetime.strptime(start_date, "%Y-%m-%d")
         end_date = datetime.strptime(end_date,  "%Y-%m-%d")
         year = start_date.year
@@ -9,10 +9,10 @@ class NPBResolver:
 
         if start_date.month != end_date.month:
             for m in range(start_date.month, end_date.month +  1):
-                url = f"https://npb.jp/games/{year}/schedule_{m}_detail.html"
+                url = f"https://npb.jp/games/{year}/schedule_{m:02}_detail.html"
                 url_list.append(url)
         else:
-            url_list.append(f"https://npb.jp/games/{year}/schedule_{start_date.month}_detail.html")
+            url_list.append(f"https://npb.jp/games/{year}/schedule_{start_date.month:02}_detail.html")
 
         return url_list
     

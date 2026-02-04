@@ -8,31 +8,31 @@ bp = Blueprint(
     url_prefix="/api/admin"
 )
 
-@bp.route("/crawls/games", methods=["POST"])
+@bp.route("/crawl/games", methods=["POST"])
 @admin_required
 def crawl_games():
     data = request.get_json(silent=True) or {}
-
+    
     league = "NPB"
     start_date = data.get("start_date")
     end_date = data.get("end_date")
     
-    try:
-        job_id = start_games_crawl(league, start_date, end_date)
-        return jsonify({
-            "job_id": job_id,
-            "status": "running",
-            "range": {
-                "start": start_date,
-                "end": end_date
-            }
-        }), 201
+    # try:
+    job_id = start_games_crawl(league, start_date, end_date)
+    return jsonify({
+        "job_id": job_id,
+        "status": "running",
+        "range": {
+            "start": start_date,
+            "end": end_date
+        }
+    }), 201
     
-    except ValueError as e:
-        return jsonify({"message": str(e)}), 400
+    # except ValueError as e:
+    #     return jsonify({"message": str(e)}), 400
     
-    except RuntimeError as e:
-        return jsonify({"message": str(e)}), 500
+    # except RuntimeError as e:
+    #     return jsonify({"message": str(e)}), 500
     
-    except Exception as e:
-        return jsonify({"message": "알 수 없는 오류가 발생했습니다."}), 500
+    # except Exception as e:
+    #     return jsonify({"message": "알 수 없는 오류가 발생했습니다."}), 500

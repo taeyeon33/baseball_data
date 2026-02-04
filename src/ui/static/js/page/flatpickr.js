@@ -1,3 +1,5 @@
+import { crawlGames } from "../api/crawl_api.js"
+
 class Flatpickr {
     constructor() {
         this.crawlBtn = document.querySelector("#crawlBtn");
@@ -34,8 +36,8 @@ class Flatpickr {
             }
 
             const dateRangeStr = crawlDateInput.value;
-            const startDate = selectedDates[0];
-            const endDate = selectedDates[1] || selectedDates[0];
+            const startDate = this.formatDate(selectedDates[0]);
+            const endDate = this.formatDate(selectedDates[1] || selectedDates[0]);
 
             // 팝업 창 열기
             const width = 600;
@@ -52,6 +54,7 @@ class Flatpickr {
             if (window.crawlPopup) {
                 log("Crawl popup opened.");
                 log(dateRangeStr, startDate, endDate);
+                const crawlings = crawlGames({"start_date": startDate, "end_date": endDate});
             } else {
                 alert("팝업 차단이 설정되어 있습니다. 팝업 차단을 해제해주세요.");
             }
@@ -69,6 +72,13 @@ class Flatpickr {
                 window.crawlPopup.document.documentElement.setAttribute("data-bs-theme", this.theme);
             }
         });
+    }
+
+    formatDate(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
     }
 }
 

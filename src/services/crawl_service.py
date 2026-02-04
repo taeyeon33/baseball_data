@@ -3,8 +3,9 @@ import sys
 
 from datetime import datetime
 from src.repositories.crawl_repositories import create_job, mark_job_running
+from src.config import PROJECT_ROOT
 
-def start_games_crawl(start_date, end_date):
+def start_games_crawl(league, start_date, end_date):
     if not start_date or not end_date:
         raise ValueError("날짜가 입력되지 않았습니다.")
     
@@ -22,24 +23,27 @@ def start_games_crawl(start_date, end_date):
     
     now = datetime.utcnow().isoformat()
 
-    job_id = create_job(
-        job_type="games",
-        start_date=start_date,
-        end_date=end_date,
-        created_at=now
-    )
+    # job_id = create_job(
+    #     job_type="games",
+    #     start_date=start_date,
+    #     end_date=end_date,
+    #     created_at=now
+    # )
 
     subprocess.Popen(
         [
             sys.executable,
-            "-m", "crawlers.games",
-            "--job-id", str(job_id),
+            "-m", "src.crawlers.games",
+            "--league", league,
+            # "--job-id", str(job_id),
+            "--job-id", str(1),
             "--start-date", start_date,
-            "--end-date", end_date
-        ]
+            "--end-date", end_date,
+        ],
+        cwd=PROJECT_ROOT
     )
 
-    mark_job_running(job_id, started_at=now)
+    # mark_job_running(1, started_at=now, check=True)
 
-    return job_id
+    return 1
 

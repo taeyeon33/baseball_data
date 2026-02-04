@@ -95,7 +95,6 @@ class Admin {
         modalForm.innerHTML = "";
 
         data.forEach(col => {
-            if (col.primary_key && col.type === "INTEGER") return;
             const div = document.createElement("div");
             div.classList.add("col-md-4");
             const label = document.createElement("label");
@@ -105,6 +104,7 @@ class Admin {
             const input = document.createElement("input");
             input.classList.add("form-control");
             input.id = col.name;
+            if (col.primary_key && col.type === "INTEGER") input.readOnly = true;
             if (col.type == "TEXT") input.type = "TEXT";
             else if (col.type == "INTEGER") input.type = "number";
             else if (col.type == "date") input.type = "date";
@@ -157,7 +157,7 @@ class Admin {
             const key = input.id;
             jsonData[key] = input.value.trim();
         });
-
+        log(jsonData, this.modalState);
         const update = await fetchUpdateData(jsonData, this.modalState);
         if (typeof update.message !== "number") {
             alert(update.message);
