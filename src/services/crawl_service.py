@@ -1,11 +1,11 @@
 import subprocess
 import sys
 
-from datetime import datetime
+from datetime import datetime, timezone
 from src.repositories.crawl_repositories import create_job, mark_job_running
 from src.config import PROJECT_ROOT
 
-def start_games_crawl(league, start_date, end_date):
+def start_game_crawler(league: str, start_date: str, end_date: str) -> int:
     if not start_date or not end_date:
         raise ValueError("날짜가 입력되지 않았습니다.")
     
@@ -21,7 +21,7 @@ def start_games_crawl(league, start_date, end_date):
     if start_dt.year != end_dt.year:
         raise ValueError("같은 연도의 기간만 가능합니다.")
     
-    now = datetime.utcnow().isoformat()
+    now = datetime.now(timezone.utc)
 
     # job_id = create_job(
     #     job_type="games",

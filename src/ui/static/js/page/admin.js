@@ -1,5 +1,5 @@
 import { fetchAllTables, fetchDataList, fetchUpdateData, fetchDeleteData } from "../api/admin_api.js";
-import { logout } from "../api/auth.js";
+import { logout } from "../api/auth_api.js";
 
 const log = console.log;
 
