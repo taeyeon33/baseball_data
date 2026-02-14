@@ -36,8 +36,10 @@ def crawl_games(league: str, start_date, end_date):
             continue
 
         if result.status == ProcessResult.CREATED:
-            game_id = result.game_id
-            # process_pbplog(pbp_url, game_id)
+            game_data = result.game_data
+            game_id = game_data["game_id"]
+            print(f"Game ID: {game_id} - {game_data['away_team_id']} vs {game_data['home_team_id']} on {game_data['game_date']}")
+            process_pbplog(pbp_url, game_id, game_data["season_id"], game_data["away_team_id"], game_data["home_team_id"])
 
 def main():
     parser = argparse.ArgumentParser()

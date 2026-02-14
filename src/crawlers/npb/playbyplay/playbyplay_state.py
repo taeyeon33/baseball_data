@@ -53,16 +53,14 @@ class GameLogState:
         self.parse_inning(event["raw_text"])
     
     def _change_pitcher(self, event):
-        # 투수 교체 로직 구현
-        pitcher_id = event["raw_text"].split()[-1]
+        pitcher_id = event["player_id"]
         if self.half:
             self.away_pitcher_id = pitcher_id
         else:
             self.home_pitcher_id = pitcher_id
     
     def _change_batter(self, event):
-        # 대타 교체 로직 구현
-        self.batter_id = event["raw_text"].split()[-3]
+        self.batter_id = event["player_id"]
     
     def _update_play_state(self, event):
         log_arr = event["raw_text"].split()
@@ -74,24 +72,25 @@ class GameLogState:
         self.on_3b = True if ("塁" in on_base and "3" in on_base) or "満塁" in on_base else False
         self.ball = int(log_arr[-2].replace("より", "").split("-")[0])
         self.strike = int(log_arr[-2].replace("より", "").split("-")[1])
-        self.batter_id = log_arr[-3]
-        # detail_code 가져오기
+        self.batter_id = event["player_id"]
+        self.detail_code = event["detail_code"]
 
     def _to_log_row(self, event):
         return {
             "game_id": self.game_id,
+            "season_id": event["season_id"],
             "inning": self.inning,
-            "half": self.half,
+            "half": "top" if self.half else "bottom",
             "seq": self.seq,
             "log_type": event["type"],
+            "batter_id": self.batter_id,
+            "pitcher_id": self.away_pitcher_id if self.half else self.home_pitcher_id,
+            "ball": self.ball,
+            "strike": self.strike,
             "out": self.out,
             "on_1b": self.on_1b,
             "on_2b": self.on_2b,
             "on_3b": self.on_3b,
-            "ball": self.ball,
-            "strike": self.strike,
-            "batter_id": self.batter_id,
-            "pitcher_id": self.away_pitcher_id if self.half else self.home_pitcher_id,
-            "detail_code": None,
+            "detail_code": self.detail_code,
             "raw_text": event["raw_text"],
         }

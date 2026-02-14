@@ -1,3 +1,4 @@
+import re
 from bs4 import BeautifulSoup
 
 class NPBPlaybyplayParser:
@@ -7,7 +8,8 @@ class NPBPlaybyplayParser:
         if not contents:
             return None
         
-        log_data = contents.select("#progress tbody tr, #progress h5")
+        log_data = contents.select("#progress tr, #progress h5")
+        del log_data[0]
 
         return log_data
     
@@ -28,3 +30,27 @@ class NPBPlaybyplayParser:
             return {"type": "steal_base", "raw_text": text}
 
         return {"type": "play", "raw_text": text}
+    
+    @staticmethod
+    def _get_player(log: BeautifulSoup) -> dict:
+        player = {"name": None, "link": None}
+
+        name_dom = log.select_one("a:last-child")
+        if name_dom:
+            player["name"] = name_dom.get_text(strip=True)
+            href = name_dom.get("href")
+            match = re.search(r"/(\d+)\.html$", href)
+            if match:
+                player["link"] = match.group(1)
+
+        return player
+    
+    @staticmethod
+    def _get_detail(log: BeautifulSoup) -> str:
+        detail = None
+
+        det_dom = log.select_one(".w2")
+        if det_dom:
+            detail = det_dom.get_text(strip=True)
+        
+        return detail

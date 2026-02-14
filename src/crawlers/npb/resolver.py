@@ -19,6 +19,12 @@ class NPBResolver:
         
         except Exception as e:
             return url_list
+        
+    def player_url(self, player_num):
+        return f"https://npb.jp/bis/players/{player_num}.html"
+    
+    def player_eng_url(self, player_num):
+        return f"https://npb.jp/bis/eng/players/{player_num}.html"
     
     def playbyplay_url(self, game_url):
         return game_url + "/playbyplay.html"

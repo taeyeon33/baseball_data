@@ -19,12 +19,18 @@ def process_game(game_url):
         game_data["home_team_id"] = GameRepositories.get_team_id(game_data["home_team_id"])
         game_data["sta_id"] = GameRepositories.get_stadium_id(game_data["sta_id"])
 
-        game_id = GameRepositories.select_game(game_data)
-        if game_id:
-            return GameProcessResult(ProcessResult.SKIPPED, game_id)
+        # game_id = GameRepositories.select_game(game_data)
+        # if game_id:
+        #     return GameProcessResult(ProcessResult.SKIPPED, game_id)
 
         game_id = GameRepositories.insert_game(game_data)
-        return GameProcessResult(ProcessResult.CREATED, game_id)
+        game_data["game_id"] = game_id
+
+        score_data = NPBGameParser._parse_score_by_inning(html)
+        if score_data:
+            GameRepositories.insert_score(game_id, score_data)
+            
+        return GameProcessResult(ProcessResult.CREATED, game_data)
 
     except Exception as e:
         raise

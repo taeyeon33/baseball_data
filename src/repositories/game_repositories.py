@@ -32,9 +32,11 @@ class GameRepositories:
             sql = """
                 SELECT team_id
                 FROM teams
-                WHERE full_name = ? OR team_name = ?
+                WHERE full_name = ? 
+                OR team_name = ?
+                OR full_name LIKE '%' || ? || '%'
             """
-            row = cur.execute(sql, (team_name, team_name)).fetchone()
+            row = cur.execute(sql, (team_name, team_name, team_name)).fetchone()
             return row["team_id"] if row else None
         
         except sqlite3.Error as e:
@@ -93,7 +95,7 @@ class GameRepositories:
             placeholders = ", ".join(["?"] * len(rows))
             values = list(rows.values())
 
-            sql = f"INSERT INTO games ({columns}) VALUES ({placeholders})";
+            sql = f"INSERT INTO games ({columns}) VALUES ({placeholders})"
         
             cur.execute(sql, values)
             conn.commit()
@@ -101,6 +103,28 @@ class GameRepositories:
             idx = cur.lastrowid
 
             return idx
+
+        except sqlite3.Error as e:
+            conn.rollback()
+            raise RuntimeError(f"Database error: {e}")
+        
+        finally:
+            conn.close()
+
+    def insert_score(game_id: int, score_data: dict) -> None:
+        conn = get_connection()
+        try:
+            cur = conn.cursor()
+
+            for i, data in score_data.items():
+                sql = """
+                    INSERT INTO scores (game_id, inning, half, runs)
+                    VALUES (?, ?, ?, ?)
+                """
+                cur.execute(sql, (game_id, i, "top", data["top"]))
+                cur.execute(sql, (game_id, i, "bottom", data["bottom"]))
+            
+            conn.commit()
 
         except sqlite3.Error as e:
             conn.rollback()

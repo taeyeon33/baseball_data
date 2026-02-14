@@ -204,3 +204,24 @@ class NPBGameParser:
         }
 
         return total_list
+    
+    @staticmethod
+    def _parse_score_by_inning(html: BeautifulSoup) -> dict:
+        contents = html.select_one(".contents")
+        if not contents:
+            return None
+        
+        score_data = dict()
+
+        top_inning = contents.select(".line-score .top td:not([class])")
+        bot_inning = contents.select(".line-score .bottom td:not([class])")
+        if not top_inning or not bot_inning:
+            return None
+        
+        for i in range(1, len(top_inning) + 1):
+            score_data[i] = {
+                "top": int(top_inning[i-1].get_text(strip=True)),
+                "bottom": int(bot_inning[i-1].get_text(strip=True)),
+            }
+        
+        return score_data
