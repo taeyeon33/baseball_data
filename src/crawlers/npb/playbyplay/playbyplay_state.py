@@ -26,13 +26,15 @@ class GameLogState:
     def apply(self, event):
         if event["type"] == "inning_change":
             self._inning_change(event)
+        elif event["type"] == "play":
+            self._update_play_state(event)
         elif event["type"] == "pitching_change":
             self._change_pitcher(event)
         elif event["type"] == "pinch_hitter":
             self._change_batter(event)
-        elif event["type"] == "play":
-            self._update_play_state(event)
-
+        elif event["type"] == "steal_base":
+            self._update_steal_base(event)
+        
         return self._to_log_row(event)
     
     def _inning_change(self, event):
@@ -60,6 +62,9 @@ class GameLogState:
             self.home_pitcher_id = pitcher_id
     
     def _change_batter(self, event):
+        self.ball = 0
+        self.strike = 0
+        self.detail_code = None
         self.batter_id = event["player_id"]
     
     def _update_play_state(self, event):
@@ -72,6 +77,18 @@ class GameLogState:
         self.on_3b = True if ("塁" in on_base and "3" in on_base) or "満塁" in on_base else False
         self.ball = int(log_arr[-2].replace("より", "").split("-")[0])
         self.strike = int(log_arr[-2].replace("より", "").split("-")[1])
+        self.batter_id = event["player_id"]
+        self.detail_code = event["detail_code"]
+
+    def _update_steal_base(self, event):
+        log_arr = event["raw_text"].split()
+        self.out = int(log_arr[0].replace("アウト", ""))
+        on_base = log_arr[1]
+        self.on_1b = True if ("塁" in on_base and "1" in on_base) or "満塁" in on_base else False
+        self.on_2b = True if ("塁" in on_base and "2" in on_base) or "満塁" in on_base else False
+        self.on_3b = True if ("塁" in on_base and "3" in on_base) or "満塁" in on_base else False
+        self.ball = 0
+        self.strike = 0
         self.batter_id = event["player_id"]
         self.detail_code = event["detail_code"]
 

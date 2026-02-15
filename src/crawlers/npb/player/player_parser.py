@@ -1,9 +1,7 @@
 import re
 from bs4 import BeautifulSoup
 
-from pykakasi import kakasi
-from hangul_romanize import Transliter
-from hangul_romanize.rule import academic
+from googletrans import Translator
 
 
 class PlayerParser:
@@ -12,8 +10,8 @@ class PlayerParser:
         contents = html.select_one(".contents")
         player = dict()
 
-        name_tag = contents.select_one("#pc_v_name")
-        kana_tag = contents.select_one("#pc_v_kana")
+        name_tag = contents.select_one("li#pc_v_name")
+        kana_tag = contents.select_one("li#pc_v_kana")
 
         name_text = ""
         if name_tag:
@@ -92,53 +90,26 @@ class PlayerParser:
 
         player_name = {"player_id": player_id}
 
-        kks = kakasi()
-        transliter = Transliter(academic)
+        kana_tag = contents.select_one("li#pc_v_kana")
 
-        name_tag = contents.select_one("#pc_v_name")
-        kana_tag = contents.select_one("#pc_v_kana")
-
-        jp_name = ""
-        if name_tag:
-            small = name_tag.select_one("small")
-            if small:
-                jp_name = small.get_text(strip=True).strip("（）() ").replace("\u3000", " ")
-            else:
-                raw_text = name_tag.get_text(" ", strip=True).replace("\u3000", " ")
-                if re.search(r"[一-龯]", raw_text):
-                    jp_name = raw_text
-                elif kana_tag:
-                    jp_name = re.sub(r"\(.*?\)", "", kana_tag.get_text(strip=True)).strip()
-                else:
-                    jp_name = raw_text
-
-        jp_name = jp_name.strip()
-        jp_parts = jp_name.split()
-
-        if len(jp_parts) == 2:
-            player_name["jp_last_name"], player_name["jp_first_name"] = jp_parts
-        else:
-            player_name["jp_last_name"] = jp_name
-            player_name["jp_first_name"] = ""
+        jp_last = ""
+        jp_first = ""
 
         if kana_tag:
-            kana_text = re.sub(r"\(.*?\)", "", kana_tag.get_text(strip=True)).strip()
+            kana_text = kana_tag.get_text(strip=True)
+
+            kana_text = re.sub(r"[（(].*?[）)]", "", kana_text)
+            kana_text = kana_text.replace("\u3000", " ").strip()
 
             if "・" in kana_text:
-                k_last, k_first = kana_text.split("・", 1)
+                jp_last, jp_first = kana_text.split("・", 1)
             else:
                 parts = kana_text.split()
-                k_last = parts[0]
-                k_first = parts[1] if len(parts) > 1 else ""
+                jp_last = parts[0]
+                jp_first = parts[1] if len(parts) > 1 else ""
 
-            last_romaji = "".join([x["hepburn"] for x in kks.convert(k_last)])
-            first_romaji = "".join([x["hepburn"] for x in kks.convert(k_first)])
-
-            player_name["ko_last_name"] = transliter.translit(last_romaji).capitalize()
-            player_name["ko_first_name"] = transliter.translit(first_romaji).capitalize()
-
-            player_name["en_last_name"] = last_romaji.capitalize()
-            player_name["en_first_name"] = first_romaji.capitalize()
+        player_name["jp_last_name"] = jp_last.strip()
+        player_name["jp_first_name"] = jp_first.strip()
 
         eng_name_li = eng_contents.select_one("li#pc_v_name")
         if eng_name_li:
@@ -147,6 +118,11 @@ class PlayerParser:
                 last, first = [x.strip() for x in eng_name.split(",", 1)]
                 player_name["en_last_name"] = last
                 player_name["en_first_name"] = first
+
+        translator = Translator()
+        
+        player_name["ko_last_name"] = translator.translate(player_name["jp_last_name"], dest="ko").text
+        player_name["ko_first_name"] = translator.translate(player_name["jp_first_name"], dest="ko").text
 
         return player_name
 

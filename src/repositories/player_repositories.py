@@ -20,7 +20,7 @@ class PlayerRepositories:
                         (p.last_name || SUBSTR(p.first_name, 1, 1)) = ?
                     )
             """
-            row = cur.execute(sql, (season_id, team_id, p_name, p_name)).fetchone()
+            row = cur.execute(sql, (team_id, season_id, p_name, p_name)).fetchone()
             return row["player_id"] if row else None
 
         except sqlite3.Error as e:
