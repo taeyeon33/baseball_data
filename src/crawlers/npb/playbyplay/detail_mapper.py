@@ -167,12 +167,17 @@ class DetailMapper:
             base = 1 if "一塁" in detail else 2 if "二塁" in detail else 3 if "三塁" in detail else None
             if base:
                 result["detail"] += f"_{base}"
+            
+        elif "途中終了" in detail:
+            result["detail_type"] = "IE"
+            result["detail"] = "Inning_End"
 
         if "エラー" in detail:
             result["error_flag"] = True
-            error_fielder = DetailMapper.get_error_fielder(detail)
+            error_fielder = DetailMapper.get_position_number(detail)
             if error_fielder:
                 result["error_fielder"] = error_fielder
+                result["detail"] += f"_E{error_fielder}"
 
         return result
     

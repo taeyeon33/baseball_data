@@ -219,11 +219,22 @@ class NPBGameParser:
             return None
         
         for i in range(1, len(top_inning) + 1):
-            if bot_inning[i-1].get_text(strip=True) == "x":
-                continue
+            top_text = top_inning[i-1].get_text(strip=True)
+            bot_text = bot_inning[i-1].get_text(strip=True)
+
+            top_match = re.match(r"\d+", top_text)
+            top_score = int(top_match.group()) if top_match else 0
+
+            bot_match = re.match(r"\d+", bot_text)
+            bot_score = int(bot_match.group()) if bot_match else 0
+
             score_data[i] = {
-                "top": int(top_inning[i-1].get_text(strip=True)),
-                "bottom": int(bot_inning[i-1].get_text(strip=True)),
+                "top": top_score,
+                "bottom": bot_score,
+                "bottom_raw": bot_text,
             }
+
+            if bot_text.lower() == "x":
+                break
         
         return score_data

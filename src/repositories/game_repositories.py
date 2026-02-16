@@ -124,6 +124,10 @@ class GameRepositories:
                     VALUES (?, ?, ?, ?)
                 """
                 cur.execute(sql, (game_id, i, "top", data["top"]))
+
+                if data["bottom_raw"].lower() == "x":
+                    continue
+            
                 cur.execute(sql, (game_id, i, "bottom", data["bottom"]))
             
             conn.commit()

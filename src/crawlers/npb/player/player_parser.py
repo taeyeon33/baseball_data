@@ -72,6 +72,8 @@ class PlayerParser:
             elif th == "ドラフト":
                 if not td:
                     player["country"] = "외국"
+                    player["first_name"], player["last_name"] = \
+                        player["last_name"], player["first_name"]
                 else:
                     player["country"] = "일본"
                 player["draft"] = td
@@ -85,7 +87,7 @@ class PlayerParser:
     @staticmethod
     def get_player_name(html: BeautifulSoup, eng_html: BeautifulSoup, player_id: str) -> dict:
         contents = html.select_one(".contents")
-        eng_contents = eng_html.select_one(".contents")
+        eng_contents = eng_html.select_one(".contents") if eng_html else None
 
         player_name = {"player_id": player_id}
 
@@ -96,6 +98,8 @@ class PlayerParser:
 
         if kana_tag:
             kana_text = kana_tag.get_text(strip=True)
+
+            is_foreign = bool(re.search(r"\([A-Z\s]+\)", kana_text))
 
             kana_text = re.sub(r"[（(].*?[）)]", "", kana_text)
             kana_text = kana_text.replace("\u3000", " ").strip()
@@ -110,13 +114,29 @@ class PlayerParser:
         player_name["jp_last_name"] = jp_last.strip()
         player_name["jp_first_name"] = jp_first.strip()
 
-        eng_name_li = eng_contents.select_one("li#pc_v_name")
-        if eng_name_li:
-            eng_name = eng_name_li.text.strip()
-            if "," in eng_name:
-                last, first = [x.strip() for x in eng_name.split(",", 1)]
-                player_name["en_last_name"] = last
-                player_name["en_first_name"] = first
+        if is_foreign:
+            player_name["jp_first_name"], player_name["jp_last_name"] = \
+                player_name["jp_last_name"], player_name["jp_first_name"]
+            
+            if not eng_contents:
+                en_match = re.search(r"\(([A-Za-z\s]+)\)", kana_tag.get_text(strip=True))
+                if en_match:
+                    en_full = en_match.group(1).strip().title()
+                    parts = en_full.split()
+
+                    if len(parts) >= 2:
+                        player_name["en_first_name"] = parts[0]
+                        player_name["en_last_name"] = " ".join(parts[1:])
+                    elif len(parts) == 1:
+                        player_name["en_last_name"] = parts[0]
+        else:
+            eng_name_li = eng_contents.select_one("li#pc_v_name") if eng_contents else None
+            if eng_name_li:
+                eng_name = eng_name_li.text.strip()
+                if "," in eng_name:
+                    last, first = [x.strip() for x in eng_name.split(",", 1)]
+                    player_name["en_last_name"] = last
+                    player_name["en_first_name"] = first
 
         translator = Translator()
         
