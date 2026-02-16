@@ -29,6 +29,26 @@ class PlayerRepositories:
         finally:
             conn.close()
 
+    def select_player(p_name: str, birthday: str) -> dict:
+        conn = get_connection()
+        try:
+            cur = conn.cursor()
+
+            sql = """
+                SELECT player_id, last_name, first_name
+                FROM players
+                WHERE birthday = ?
+                AND (last_name || first_name) = ?
+            """
+            row = cur.execute(sql, (birthday, p_name)).fetchone()
+            return row["player_id"] if row else None
+
+        except sqlite3.Error as e:
+            raise RuntimeError(f"Database error: {e}")
+        
+        finally:
+            conn.close()
+
     def insert_player(rows: dict, table: str) -> int:
         conn = get_connection()
         try:
@@ -38,7 +58,7 @@ class PlayerRepositories:
             placeholders = ", ".join(["?"] * len(rows))
             values = list(rows.values())
 
-            sql = f"INSERT INTO {table} ({columns}) VALUES ({placeholders})"
+            sql = f"INSERT OR IGNORE INTO {table} ({columns}) VALUES ({placeholders})"
         
             cur.execute(sql, values)
             conn.commit()

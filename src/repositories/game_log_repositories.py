@@ -12,7 +12,7 @@ class GameLogRepositories:
             values = list(rows.values())
 
             sql = f"INSERT INTO game_logs ({columns}) VALUES ({placeholders})"
-
+            
             cur.execute(sql, values)
             conn.commit()
 

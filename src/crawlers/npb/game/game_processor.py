@@ -14,10 +14,11 @@ def process_game(game_url):
         if not game_data:
             return GameProcessResult(ProcessResult.FAILED, None)
         
+        year = game_data["season_id"]
         game_data["season_id"] = GameRepositories.get_season_id(game_data["season_id"], "NPB")
         game_data["away_team_id"] = GameRepositories.get_team_id(game_data["away_team_id"])
         game_data["home_team_id"] = GameRepositories.get_team_id(game_data["home_team_id"])
-        game_data["sta_id"] = GameRepositories.get_stadium_id(game_data["sta_id"])
+        game_data["sta_id"] = GameRepositories.get_stadium_id(game_data["sta_id"], year)
 
         # game_id = GameRepositories.select_game(game_data)
         # if game_id:

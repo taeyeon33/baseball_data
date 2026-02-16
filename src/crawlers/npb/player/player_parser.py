@@ -14,20 +14,19 @@ class PlayerParser:
         kana_tag = contents.select_one("li#pc_v_kana")
 
         name_text = ""
-        if name_tag:
+
+        if kana_tag and re.search(r"\([A-Za-z\s\.]+\)", kana_tag.get_text()):
+            kana_raw = kana_tag.get_text(strip=True).replace("\u3000", " ").replace("・", " ")
+            name_text = re.sub(r"\(.*?\)", "", kana_raw).strip()
+        
+        elif name_tag:
             small = name_tag.select_one("small")
 
             if small:
                 name_text = small.get_text(strip=True).strip("（）() ").replace("\u3000", " ")
             else:
                 raw_text = name_tag.get_text(" ", strip=True).replace("\u3000", " ")
-                if re.search(r"[一-龯]", raw_text):
-                    name_text = raw_text
-                else:
-                    if kana_tag:
-                        name_text = re.sub(r"\(.*?\)", "", kana_tag.get_text(strip=True)).strip()
-                    else:
-                        name_text = raw_text
+                name_text = raw_text
 
         name_text = name_text.strip()
         parts = name_text.split()
@@ -134,7 +133,12 @@ class PlayerParser:
 
         stat_list = contents.select(".registerStats")
         for row in stat_list:
+            year = row.select_one(".year").text.strip()
             team_name = row.select_one(".team").text.strip().replace("\u3000", " ").replace(" ", "")
-            player_history[row.select_one(".year").text.strip()] = team_name
+
+            if year not in player_history:
+                player_history[year] = []
+
+            player_history[year].append(team_name)
 
         return player_history

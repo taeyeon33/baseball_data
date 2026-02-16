@@ -1,3 +1,4 @@
+import re
 import traceback
 from src.crawlers.common.html_fetcher import fetch_html
 from src.crawlers.npb.playbyplay.playbyplay_parser import NPBPlaybyplayParser
@@ -41,7 +42,7 @@ def process_pbplog(game_url, game_id, season_id, away_team_id, home_team_id):
                 player_id = PlayerRepositories.select_season_player(player["name"], season_id, team_id)
                 print(f"Player name: {player['name']}, Team ID: {team_id}, Season ID: {season_id}, Player ID from DB: {player_id}")
                 if not player_id:
-                    player_id = process_player(player["link"])
+                    player_id = process_player(player["link"], season_id, team_id)
 
                 event["player_id"] = player_id
                 print(f"Player: {player}, Player ID: {player_id}")
@@ -55,6 +56,8 @@ def process_pbplog(game_url, game_id, season_id, away_team_id, home_team_id):
 
                 if event["type"] == "play" or event["type"] == "steal_base":
                     detail = NPBPlaybyplayParser._get_detail(log)
+                    if event["type"] == "steal_base":
+                        detail = re.sub(r"^（.*?）", "", detail)
                     detail_code = DetailRepositories.select_detail(detail, "jp")
                     if not detail_code:
                         detail_data = DetailMapper.parse(detail)

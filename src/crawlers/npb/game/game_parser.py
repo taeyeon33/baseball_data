@@ -219,6 +219,8 @@ class NPBGameParser:
             return None
         
         for i in range(1, len(top_inning) + 1):
+            if bot_inning[i-1].get_text(strip=True) == "x":
+                continue
             score_data[i] = {
                 "top": int(top_inning[i-1].get_text(strip=True)),
                 "bottom": int(bot_inning[i-1].get_text(strip=True)),

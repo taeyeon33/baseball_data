@@ -21,6 +21,8 @@ class DetailMapper:
                 result["detail"] = "SSO"
             elif "見逃" in detail:
                 result["detail"] = "LSO"
+            else:
+                result["detail"] = "SO"
 
         elif "フォアボール" in detail:
             if "敬遠" in detail:

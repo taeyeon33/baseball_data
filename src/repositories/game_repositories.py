@@ -45,7 +45,7 @@ class GameRepositories:
         finally:
             conn.close()
 
-    def get_stadium_id(sta_name: str) -> str:
+    def get_stadium_id(sta_name: str, year: str) -> str:
         conn = get_connection()
         try:
             cur = conn.cursor()
@@ -56,8 +56,10 @@ class GameRepositories:
                 JOIN stadium_names AS sn 
                 ON st.sta_id = sn.sta_id
                 WHERE sn.name_jp_short = ?
+                AND sn.start_year <= ?
+                AND (sn.end_year IS NULL OR sn.end_year >= ?)
             """
-            row = cur.execute(sql, (sta_name,)).fetchone()
+            row = cur.execute(sql, (sta_name, int(year), int(year))).fetchone()
             return row["sta_id"] if row else None
 
         except sqlite3.Error as e:
