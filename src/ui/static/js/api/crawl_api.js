@@ -6,3 +6,9 @@ export function crawlGames(jsonData) {
         body: jsonData
     });
 }
+
+export function getCrawlStatus(jobId) {
+    return request(`/api/admin/crawl/status?job_id=${jobId}`, {
+        method: "GET"
+    });
+}

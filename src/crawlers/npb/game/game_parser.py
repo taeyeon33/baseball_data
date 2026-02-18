@@ -16,7 +16,7 @@ class NPBGameParser:
         return game_data
 
     @staticmethod
-    def _get_game_info(contents: BeautifulSoup, text: str) -> dict:
+    def _get_game_info(contents: BeautifulSoup, text: str):
         result = dict()
         score_list = NPBGameParser._parse_score_total(contents, NPBGameParser._parse_status(text))
 
@@ -45,13 +45,13 @@ class NPBGameParser:
         return result
     
     @staticmethod
-    def _parse_season(contents: BeautifulSoup) -> str:
+    def _parse_season(contents: BeautifulSoup):
         game_date = NPBGameParser._parse_game_date(contents)
         year = game_date.year if game_date else None
         return year
 
     @staticmethod
-    def _parse_game_date(contents: BeautifulSoup) -> datetime:
+    def _parse_game_date(contents: BeautifulSoup):
         game_date = None
         date_dom = contents.select_one(".game_tit time")
         date = date_dom.get_text(strip=True) if date_dom else None
@@ -63,7 +63,7 @@ class NPBGameParser:
         return game_date
     
     @staticmethod
-    def _parse_start_time(text: str) -> str:
+    def _parse_start_time(text: str):
         start_time = None
         start = re.search(r"開始\s*(\d{1,2}:\d{2})", text)
 
@@ -73,7 +73,7 @@ class NPBGameParser:
         return start_time
     
     @staticmethod
-    def _parse_end_time(text: str) -> str:
+    def _parse_end_time(text: str):
         end_time = None
         end = re.search(r"終了\s*(\d{1,2}:\d{2})", text)
 
@@ -83,7 +83,7 @@ class NPBGameParser:
         return end_time
     
     @staticmethod
-    def _parse_duration(text: str) -> str:
+    def _parse_duration(text: str):
         game_time = None
         duration = re.search(r"試合時間\s*(\d+)時間(\d+)分", text)
 
@@ -94,7 +94,7 @@ class NPBGameParser:
         return game_time
     
     @staticmethod
-    def _parse_game_type(contents: BeautifulSoup) -> str:
+    def _parse_game_type(contents: BeautifulSoup):
         game_type = None
 
         dom = contents.select_one(".game_tit h3")
@@ -120,7 +120,7 @@ class NPBGameParser:
         return game_type
      
     @staticmethod
-    def _parse_attendance(text: str) -> str:
+    def _parse_attendance(text: str):
         attendance = 0
         att = re.search(r"入場者\s*([\d,]+)人", text)
         
@@ -130,7 +130,7 @@ class NPBGameParser:
         return attendance
     
     @staticmethod
-    def _parse_team_name(contents: BeautifulSoup, tb: str) -> str:
+    def _parse_team_name(contents: BeautifulSoup, tb: str):
         team_name = ""
         name_span = contents.select_one(f".{tb}>th>span")
 
@@ -143,14 +143,14 @@ class NPBGameParser:
         return team_name
     
     @staticmethod
-    def _parse_stadium(contents: BeautifulSoup) -> str:
+    def _parse_stadium(contents: BeautifulSoup):
         sta_dom = contents.select_one(".game_tit .place")
         stadium = sta_dom.get_text(strip=True) if sta_dom else None
 
         return stadium
 
     @staticmethod
-    def _parse_status(text: str) -> str:
+    def _parse_status(text: str):
         status = "unknown"
 
         if "中止" in text:
@@ -174,7 +174,7 @@ class NPBGameParser:
         return status
     
     @staticmethod
-    def _parse_score_total(contents: BeautifulSoup, status: str) -> dict:
+    def _parse_score_total(contents: BeautifulSoup, status: str):
         total_list = dict()
 
         if "canceled" in status or "nogame" in status:
@@ -206,7 +206,7 @@ class NPBGameParser:
         return total_list
     
     @staticmethod
-    def _parse_score_by_inning(html: BeautifulSoup) -> dict:
+    def _parse_score_by_inning(html: BeautifulSoup):
         contents = html.select_one(".contents")
         if not contents:
             return None

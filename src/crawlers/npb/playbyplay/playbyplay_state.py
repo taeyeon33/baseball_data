@@ -1,5 +1,5 @@
 class GameLogState:
-    def __init__(self, game_id):
+    def __init__(self, game_id: str):
         self.game_id = game_id
         self.inning = 1
         self.half = True
@@ -15,15 +15,14 @@ class GameLogState:
         self.home_pitcher_id = None
         self.detail_code = None
 
-    # 이닝 정보
-    def parse_inning(self, text):
+    def parse_inning(self, text: str):
         self.seq = 0
         parts = text.split()
         inning_text = parts[0].split("回")
         self.inning = int(inning_text[0])
         self.half = True if "表" in inning_text[1] else False
 
-    def apply(self, event):
+    def apply(self, event: dict):
         if event["type"] == "inning_change":
             self._inning_change(event)
         elif event["type"] == "play":
@@ -37,7 +36,7 @@ class GameLogState:
         
         return self._to_log_row(event)
     
-    def _inning_change(self, event):
+    def _inning_change(self, event: dict):
         if self.half:
             self.half = False
         if not self.half:
@@ -54,20 +53,20 @@ class GameLogState:
         self.detail_code = None
         self.parse_inning(event["raw_text"])
     
-    def _change_pitcher(self, event):
+    def _change_pitcher(self, event: dict):
         pitcher_id = event["player_id"]
         if self.half:
             self.away_pitcher_id = pitcher_id
         else:
             self.home_pitcher_id = pitcher_id
     
-    def _change_batter(self, event):
+    def _change_batter(self, event: dict):
         self.ball = 0
         self.strike = 0
         self.detail_code = None
         self.batter_id = event["player_id"]
     
-    def _update_play_state(self, event):
+    def _update_play_state(self, event: dict):
         log_arr = event["raw_text"].split()
         self.seq += 1
         self.out = int(log_arr[0].replace("アウト", ""))
@@ -80,7 +79,7 @@ class GameLogState:
         self.batter_id = event["player_id"]
         self.detail_code = event["detail_code"]
 
-    def _update_steal_base(self, event):
+    def _update_steal_base(self, event: dict):
         log_arr = event["raw_text"].split()
         self.out = int(log_arr[0].replace("アウト", ""))
         on_base = log_arr[1]
@@ -92,7 +91,7 @@ class GameLogState:
         self.batter_id = event["player_id"]
         self.detail_code = event["detail_code"]
 
-    def _to_log_row(self, event):
+    def _to_log_row(self, event: dict):
         return {
             "game_id": self.game_id,
             "season_id": event["season_id"],

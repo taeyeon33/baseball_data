@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from src.crawlers.common.html_fetcher import fetch_html
 from src.crawlers.npb.schedule.schedule_parser import NPBScheduleParser
 
-def get_game_urls(schedule_urls, start_date, end_date):
+def get_game_urls(schedule_urls: list, start_date: datetime, end_date: datetime):
     game_urls = list()
     
     try:

@@ -1,4 +1,4 @@
-import { crawlGames } from "../api/crawl_api.js"
+import { crawlGames, getCrawlStatus } from "../api/crawl_api.js"
 
 class Flatpickr {
     constructor() {
@@ -28,17 +28,13 @@ class Flatpickr {
 
     crawlEvent() {
         const { crawlBtn, crawlDateInput, fp } = this;
-        crawlBtn.addEventListener("click", e => {
+        crawlBtn.addEventListener("click", async e => {
             const selectedDates = fp.selectedDates;
-            if (selectedDates.length === 0) {
-                alert("크롤링할 날짜를 선택해주세요.");
-                return;
-            }
+            if (selectedDates.length === 0) return alert("크롤링할 날짜를 선택해주세요.");
 
-            const dateRangeStr = crawlDateInput.value;
             const startDate = this.formatDate(selectedDates[0]);
             const endDate = this.formatDate(selectedDates[1] || selectedDates[0]);
-
+            
             // 팝업 창 열기
             const width = 600;
             const height = 400;
@@ -50,13 +46,23 @@ class Flatpickr {
                 "CrawlProgress",
                 `width=${width},height=${height},top=${top},left=${left},menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=no`
             );
+            
+            if (!window.crawlPopup) return alert("팝업 차단이 설정되어 있습니다. 팝업 차단을 해제해주세요.");
 
-            if (window.crawlPopup) {
-                log("Crawl popup opened.");
-                log(dateRangeStr, startDate, endDate);
-                const crawlings = crawlGames({"start_date": startDate, "end_date": endDate});
-            } else {
-                alert("팝업 차단이 설정되어 있습니다. 팝업 차단을 해제해주세요.");
+            try {
+                const response = await crawlGames({"start_date": startDate, "end_date": endDate});
+                const jobId = response.job_id;
+
+                if (!jobId) return alert("Job 생성 실패");
+
+                window.addEventListener("message", function handler(e) {
+                    if (e.data?.type === "POPUP_READY") {
+                        window.crawlPopup.postMessage({ type: "JOB_ID", jobId }, "*");
+                        window.removeEventListener("message", handler);
+                    }
+                });
+            } catch (err) {
+                alert("크롤링 시작 실패: " + err.message);
             }
         });
     }

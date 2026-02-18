@@ -1,0 +1,13 @@
+수정 순서
+
+1. 타이세이, 하야테 등 first_name, last_name 바뀜 현상 수정
+
+2. 크롤링 진행상황 total 안맞는 버그 수정
+
+3. box_processor, box_parser 완성
+
+4. 일부 경기만 크롤링 된 날짜에 크롤링 시도 시 오류 수정
+
+5. 선수 정보 페이지 만들기
+
+6. admin_service.py, admin_repositories.py 전체 수정 예정 (테이블 호출 방식, 페이징 or 스크롤 추가)

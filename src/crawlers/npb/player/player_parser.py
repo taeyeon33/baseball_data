@@ -6,7 +6,7 @@ from googletrans import Translator
 
 class PlayerParser:
     @staticmethod
-    def get_player(html: BeautifulSoup) -> dict:
+    def get_player(html: BeautifulSoup):
         contents = html.select_one(".contents")
         player = dict()
 
@@ -32,7 +32,10 @@ class PlayerParser:
         parts = name_text.split()
 
         if len(parts) == 2:
-            player["last_name"], player["first_name"] = parts
+            if name_tag.find("small"):
+                player["first_name"], player["last_name"] = parts
+            else:
+                player["last_name"], player["first_name"] = parts
         else:
             player["last_name"] = name_text
             player["first_name"] = ""
@@ -81,11 +84,11 @@ class PlayerParser:
         photo_tag = contents.select_one("#pc_v_photo img")
         if photo_tag:
             player["photo"] = photo_tag.get("src")
-
+        print(player)
         return player
 
     @staticmethod
-    def get_player_name(html: BeautifulSoup, eng_html: BeautifulSoup, player_id: str) -> dict:
+    def get_player_name(html: BeautifulSoup, eng_html: BeautifulSoup, player_id: str):
         contents = html.select_one(".contents")
         eng_contents = eng_html.select_one(".contents") if eng_html else None
 
@@ -101,13 +104,16 @@ class PlayerParser:
 
             is_foreign = bool(re.search(r"\([A-Z\s]+\)", kana_text))
 
-            kana_text = re.sub(r"[（(].*?[）)]", "", kana_text)
-            kana_text = kana_text.replace("\u3000", " ").strip()
-
-            if "・" in kana_text:
-                jp_last, jp_first = kana_text.split("・", 1)
+            bracket_match = re.search(r"（([^）]+)）", kana_text)
+            if bracket_match:
+                full_name = bracket_match.group(1).strip()
             else:
-                parts = kana_text.split()
+                full_name = kana_text.strip()
+
+            if "・" in full_name:
+                jp_last, jp_first = [x.strip() for x in full_name.split("・", 1)]
+            else:
+                parts = full_name.split()
                 jp_last = parts[0]
                 jp_first = parts[1] if len(parts) > 1 else ""
 
@@ -117,7 +123,9 @@ class PlayerParser:
         if is_foreign:
             player_name["jp_first_name"], player_name["jp_last_name"] = \
                 player_name["jp_last_name"], player_name["jp_first_name"]
-            
+
+            player_name["jp_last_name"] = player_name["jp_last_name"].split("\u3000")[0]
+
             if not eng_contents:
                 en_match = re.search(r"\(([A-Za-z\s]+)\)", kana_tag.get_text(strip=True))
                 if en_match:
@@ -130,6 +138,9 @@ class PlayerParser:
                     elif len(parts) == 1:
                         player_name["en_last_name"] = parts[0]
         else:
+            if bracket_match:
+                player_name["jp_first_name"], player_name["jp_last_name"] = \
+                    player_name["jp_last_name"], player_name["jp_first_name"]
             eng_name_li = eng_contents.select_one("li#pc_v_name") if eng_contents else None
             if eng_name_li:
                 eng_name = eng_name_li.text.strip()
@@ -142,11 +153,11 @@ class PlayerParser:
         
         player_name["ko_last_name"] = translator.translate(player_name["jp_last_name"], dest="ko").text
         player_name["ko_first_name"] = translator.translate(player_name["jp_first_name"], dest="ko").text
-
+        print(player_name)
         return player_name
 
     @staticmethod
-    def get_player_history(html: BeautifulSoup) -> dict:
+    def get_player_history(html: BeautifulSoup):
         contents = html.select_one(".contents")
 
         player_history = dict()

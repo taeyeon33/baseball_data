@@ -1,12 +1,14 @@
+import sqlite3
 from src.crawlers.npb.resolver import NPBResolver
 from src.crawlers.common.html_fetcher import fetch_html
 from src.crawlers.npb.player.player_parser import PlayerParser
+from src.repositories.base_repository import BaseRepository
 from src.repositories.player_repositories import PlayerRepositories
 from src.repositories.game_repositories import GameRepositories
 from src.domain.results import GameProcessResult
 from src.domain.enums import ProcessResult
-import traceback
-def process_player(link: str, season_id: int = None, team_id: int = None) -> int:
+
+def process_player(conn: sqlite3.Connection, back_number: int, link: str, season_id: int = None, team_id: int = None):
     try:
         resolver = NPBResolver()
 
@@ -20,21 +22,22 @@ def process_player(link: str, season_id: int = None, team_id: int = None) -> int
         eng_url = resolver.player_eng_url(link)
         eng_html = fetch_html(eng_url)
 
-        # 나중에 team_type 컬럼 추가해서 ALLSTARS_TEAM_IDS 제거하기
         ALLSTARS_TEAM_IDS = {13, 14}
-        player_id = PlayerRepositories.select_player(player["last_name"] + player["first_name"], player["birthday"])
+        player_id = PlayerRepositories.select_player(conn, player["last_name"] + player["first_name"], player["birthday"])
         if player_id:
             if team_id and team_id in ALLSTARS_TEAM_IDS:
-                PlayerRepositories.insert_player({"player_id": player_id, "team_id": team_id, "season_id": season_id}, "player_team_history")
+                insert_data = {"player_id": player_id, "uniform_number": back_number, "team_id": team_id, "season_id": season_id}
+                BaseRepository.insert(conn, "player_team_history", insert_data, False, True)
             return player_id
         
-        player_id = PlayerRepositories.insert_player(player, "players")
+        player_id = BaseRepository.insert(conn, "players", player, True, True)
 
         if team_id and team_id in ALLSTARS_TEAM_IDS:
-            PlayerRepositories.insert_player({"player_id": player_id, "team_id": team_id, "season_id": season_id}, "player_team_history")
+            insert_data = {"player_id": player_id, "uniform_number": back_number,  "team_id": team_id, "season_id": season_id}
+            BaseRepository.insert(conn, "player_team_history", insert_data, False, True)
         
         player_names = PlayerParser.get_player_name(html, eng_html, player_id)
-        PlayerRepositories.insert_player(player_names, "player_names")
+        BaseRepository.insert(conn, "player_names", player_names, False, True)
 
         player_history = dict()
         player_seasons = PlayerParser.get_player_history(html)
@@ -42,10 +45,10 @@ def process_player(link: str, season_id: int = None, team_id: int = None) -> int
             if int(year) < 2016:
                 continue
             
-            season_id = GameRepositories.get_season_id(year, "NPB")
+            season_id = GameRepositories.get_season_id(conn, year, "NPB")
 
             for team in teams:
-                team_id = GameRepositories.get_team_id(team)
+                team_id = GameRepositories.get_team_id(conn, team)
 
                 player_history = {
                     "player_id": player_id,
@@ -56,11 +59,9 @@ def process_player(link: str, season_id: int = None, team_id: int = None) -> int
                     "end_date": None,
                 }
             
-                PlayerRepositories.insert_player(player_history, "player_team_history")
+                BaseRepository.insert(conn, "player_team_history", player_history, False, True)
 
         return player_id
 
     except Exception as e:
-        print("Error 발생:")
-        traceback.print_exc()
-        return e
+        raise RuntimeError(e)

@@ -2,10 +2,11 @@ import subprocess
 import sys
 
 from datetime import datetime, timezone
-from src.repositories.crawl_repositories import create_job, mark_job_running
+from src.repositories.crawl_job_repositories import CrawlJobRepositories
+from src.db.db_executor import insert_and_commit
 from src.config import PROJECT_ROOT
 
-def start_game_crawler(league: str, start_date: str, end_date: str) -> int:
+def start_game_crawler(league: str, start_date: str, end_date: str):
     if not start_date or not end_date:
         raise ValueError("날짜가 입력되지 않았습니다.")
     
@@ -23,27 +24,28 @@ def start_game_crawler(league: str, start_date: str, end_date: str) -> int:
     
     now = datetime.now(timezone.utc)
 
-    # job_id = create_job(
-    #     job_type="games",
-    #     start_date=start_date,
-    #     end_date=end_date,
-    #     created_at=now
-    # )
+    try:
+        job_data = {"job_type": "games", "start_date": start_date, "end_date": end_date, "created_at": now}
+        job_id = insert_and_commit("crawl_jobs", job_data, True)
 
-    subprocess.Popen(
-        [
-            sys.executable,
-            "-m", "src.crawlers.games",
-            "--league", league,
-            # "--job-id", str(job_id),
-            "--job-id", str(1),
-            "--start-date", start_date,
-            "--end-date", end_date,
-        ],
-        cwd=PROJECT_ROOT
-    )
+        if not job_id:
+            return None
 
-    # mark_job_running(1, started_at=now, check=True)
+        subprocess.Popen(
+            [
+                sys.executable,
+                "-m", "src.crawlers.games",
+                "--league", league,
+                "--job-id", str(job_id),
+                "--start-date", start_date,
+                "--end-date", end_date,
+            ],
+            cwd=PROJECT_ROOT
+        )
 
-    return 1
+        CrawlJobRepositories.mark_job_running(job_id, started_at=now)
 
+        return job_id
+
+    except Exception as e:
+        raise RuntimeError(e)

@@ -4,4 +4,5 @@ from .enums import ProcessResult
 @dataclass
 class GameProcessResult:
     status: ProcessResult
-    game_data: dict | int | None
+    data: dict | int | None
+    msg: str | None

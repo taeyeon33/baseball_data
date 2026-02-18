@@ -2,7 +2,7 @@ import re
 
 class DetailMapper:
     @staticmethod
-    def parse(detail: str) -> dict:
+    def parse(detail: str):
         result = {
             "detail": None,
             "is_hit": False,
@@ -182,7 +182,7 @@ class DetailMapper:
         return result
     
     @staticmethod
-    def get_position(text: str) -> str:
+    def get_position(text: str):
         position_map = {
             "ファースト": "1B",
             "セカンド": "2B",
@@ -204,7 +204,7 @@ class DetailMapper:
         return None
     
     @staticmethod
-    def get_position_number(text: str) -> str:
+    def get_position_number(text: str):
         position_map = {
             "ファースト": "3",
             "セカンド": "4",
@@ -224,7 +224,7 @@ class DetailMapper:
         return None
     
     @staticmethod
-    def get_rbi(text: str) -> int:
+    def get_rbi(text: str):
         m = re.search(r"打点\s*([0-9]+)", text)
         if m:
             return int(m.group(1))

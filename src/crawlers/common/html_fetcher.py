@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from src.config import DEFEAULT_HEADERS, REQUEST_TIMEOUT, ENCODING
 
-def fetch_html(url: str) -> BeautifulSoup:
+def fetch_html(url: str):
     try:
         res = requests.get(url, headers=DEFEAULT_HEADERS, timeout=REQUEST_TIMEOUT)
         res.raise_for_status()
@@ -11,4 +11,4 @@ def fetch_html(url: str) -> BeautifulSoup:
         html = res.text
         return BeautifulSoup(html, "lxml")
     except Exception as e:
-        return None
+        raise RuntimeError(e)

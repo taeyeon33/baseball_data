@@ -14,7 +14,7 @@ class NPBPlaybyplayParser:
         return log_data
     
     @staticmethod
-    def _get_log_type(log: BeautifulSoup) -> str:
+    def get_log_type(log: BeautifulSoup):
         text = log.get_text(separator=" ", strip=True)
 
         if log.name == "h5":
@@ -32,7 +32,7 @@ class NPBPlaybyplayParser:
         return {"type": "play", "raw_text": text}
     
     @staticmethod
-    def _get_player(log: BeautifulSoup) -> dict:
+    def get_player(log: BeautifulSoup):
         player = {"name": None, "link": None}
 
         name_dom = log.select_one("a:last-child")
@@ -46,7 +46,7 @@ class NPBPlaybyplayParser:
         return player
     
     @staticmethod
-    def _get_detail(log: BeautifulSoup) -> str:
+    def get_detail(log: BeautifulSoup):
         detail = None
 
         det_dom = log.select_one(".w2")
