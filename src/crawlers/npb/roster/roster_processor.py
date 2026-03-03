@@ -33,7 +33,7 @@ def process_roster(conn: sqlite3.Connection, roster_url: str, game_data: dict):
             insert_data = {
                 "game_id": game_data["game_id"],
                 "team_id": team_id,
-                "player_id": player_id
+                "player_id": player["player_id"]
             }
             BaseRepository.insert(conn, "game_rosters", insert_data, False, True)
 

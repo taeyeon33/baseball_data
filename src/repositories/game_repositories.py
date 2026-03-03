@@ -51,7 +51,7 @@ class GameRepositories:
         row = cur.execute(sql, (game_id,)).fetchone()
         return dict(row) if row else None
 
-    def insert_game(conn, game_id, status):
+    def insert_game(conn: sqlite3.Connection, game_id: str, status: str):
         try:
             cur = conn.cursor()
 
@@ -95,5 +95,24 @@ class GameRepositories:
             
                 cur.execute(sql, (game_id, i, "bottom", data["bottom"]))
 
+        except sqlite3.Error as e:
+            raise RuntimeError(f"Database error: {e}")
+        
+    def get_game_logs(conn: sqlite3.Connection, game_id: str):
+        try:
+            cur = conn.cursor()
+
+            sql = """
+                SELECT l.*, d.*
+                FROM game_logs AS l
+                JOIN details AS d
+                ON l.detail_code = d.detail_code
+                WHERE l.game_id = ?
+                ORDER BY log_id ASC
+            """
+            
+            rows = cur.execute(sql, (game_id,)).fetchall()
+            return rows
+        
         except sqlite3.Error as e:
             raise RuntimeError(f"Database error: {e}")

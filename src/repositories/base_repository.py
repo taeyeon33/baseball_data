@@ -1,5 +1,4 @@
 import sqlite3
-from src.db.connect import get_connection
 
 class BaseRepository:
     @staticmethod

@@ -29,8 +29,8 @@ class PlayerRepositories:
             WHERE birthday = ?
             AND (last_name || first_name) = ?
         """
-        cur.execute(sql, (birthday, p_name))
-        return cur.fetchone()
+        row = cur.execute(sql, (birthday, p_name)).fetchone()
+        return row["player_id"] if row else None
         
     def update_uniform_number(conn: sqlite3.Connection, player_id: int, season_id: int, team_id: int, number: int):
         try:
@@ -43,3 +43,11 @@ class PlayerRepositories:
         
         except sqlite3.Error as e:
             raise RuntimeError(f"Database error: {e}")
+        
+    def select_player_position(conn: sqlite3.Connection, player_id: int, position_code: str):
+        cur = conn.cursor()
+
+        sql = "SELECT * FROM player_positions WHERE player_id = ? AND position_code = ?"
+
+        cur.execute(sql, (player_id, position_code))
+        return cur.fetchone()

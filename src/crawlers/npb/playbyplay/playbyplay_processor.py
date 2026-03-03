@@ -3,8 +3,6 @@ import sqlite3
 from src.crawlers.common.html_fetcher import fetch_html
 from src.crawlers.npb.playbyplay.playbyplay_parser import NPBPlaybyplayParser
 from src.crawlers.npb.playbyplay.playbyplay_state import GameLogState
-from src.crawlers.npb.player.player_processor import process_player
-from src.repositories.player_repositories import PlayerRepositories
 from src.repositories.detail_repositories import DetailRepositories
 from src.repositories.base_repository import BaseRepository
 from src.crawlers.npb.playbyplay.detail_mapper import DetailMapper
