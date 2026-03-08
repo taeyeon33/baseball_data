@@ -11,3 +11,5 @@
 5. 선수 정보 페이지 만들기
 
 6. admin_service.py, admin_repositories.py 전체 수정 예정 (테이블 호출 방식, 페이징 or 스크롤 추가)
+
+7. detail_code 오류 수정

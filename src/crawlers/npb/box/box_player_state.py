@@ -1,21 +1,23 @@
 class PlayerBoxState:
-    def __init__(self, game_id, player_map):
+    def __init__(self, game_id: str, away_team_id: int, home_team_id: int, player_map: map):
         self.game_id = game_id
+        self.away_team_id = away_team_id
+        self.home_team_id = home_team_id
         self.player_map = player_map
     
     @staticmethod
-    def build_all_batter_data(game_id, away_batter_data, home_batter_data, player_map, away_team_id, home_team_id):
+    def build_all_batter_data(self, away_batter_data: list, home_batter_data: list):
         all_batter_data = {}
 
         combined = [
-            (away_batter_data, away_team_id),
-            (home_batter_data, home_team_id)
+            (away_batter_data, self.away_team_id),
+            (home_batter_data, self.home_team_id)
         ]
 
         for team_data, team_id in combined:
             for raw in team_data:
-                name = raw.get("player_name") or raw.get("player")
-                player_id = player_map.get((name, team_id))
+                player_link = raw.get("link")
+                player_id = self.player_map.get(player_link)
 
                 if not player_id:
                     continue
@@ -36,8 +38,9 @@ class PlayerBoxState:
                     continue
 
                 stat = {
-                    "game_id": game_id,
+                    "game_id": self.game_id,
                     "player_id": player_id,
+                    "team_id": team_id,
                     "PA": PA,
                     "AB": AB,
                     "H": H,
@@ -64,10 +67,11 @@ class PlayerBoxState:
         return all_batter_data
     
     @staticmethod
-    def create_empty_pitcher_stat(game_id, player_id):
+    def create_empty_pitcher_stat(self, player_id, team_id):
         return {
-            "game_id": game_id,
+            "game_id": self.game_id,
             "player_id": player_id,
+            "team_id": team_id,
             "GS": 0,
             "GR": 0,
             "GF": 0,
@@ -95,25 +99,25 @@ class PlayerBoxState:
         }
     
     @staticmethod
-    def build_all_pitcher_data(game_id, away_pitcher_data, home_pitcher_data, player_map, away_team_id, home_team_id):
+    def build_all_pitcher_data(self, away_pitcher_data, home_pitcher_data):
         all_pitcher_data = {}
 
         combined = [
-            (away_pitcher_data, away_team_id),
-            (home_pitcher_data, home_team_id)
+            (away_pitcher_data, self.away_team_id),
+            (home_pitcher_data, self.home_team_id)
         ]
 
         for team_data, team_id in combined:
             for raw in team_data:
-                name = raw.get("player_name")
-                player_id = player_map.get((name, team_id))
+                player_link = raw.get("link")
+                player_id = self.player_map.get(player_link)
 
                 if not player_id:
                     continue
 
-                stat = PlayerBoxState.create_empty_pitcher_stat(game_id, player_id)
+                stat = PlayerBoxState.create_empty_pitcher_stat(player_id, team_id)
 
-                role = raw.get("fielding", [])
+                role = raw.get("positions", [])
                 if "SP" in role:
                     stat["GS"] = 1
                 elif "RP" in role:

@@ -105,7 +105,7 @@ class GameRepositories:
             sql = """
                 SELECT l.*, d.*
                 FROM game_logs AS l
-                JOIN details AS d
+                LEFT OUTER JOIN details AS d
                 ON l.detail_code = d.detail_code
                 WHERE l.game_id = ?
                 ORDER BY log_id ASC
@@ -114,5 +114,17 @@ class GameRepositories:
             rows = cur.execute(sql, (game_id,)).fetchall()
             return rows
         
+        except sqlite3.Error as e:
+            raise RuntimeError(f"Database error: {e}")
+        
+    def get_game_score_inning(conn: sqlite3.Connection, game_id: str, inning: int, half: str):
+        try:
+            cur = conn.cursor()
+            
+            sql = "SELECT runs FROM scores WHERE game_id = ? AND inning = ? AND half = ?"
+
+            row = cur.execute(sql, (game_id, inning, half)).fetchone()
+            return row["runs"] if row else None
+
         except sqlite3.Error as e:
             raise RuntimeError(f"Database error: {e}")

@@ -21,6 +21,11 @@ def process_pbplog(conn: sqlite3.Connection, game_url: str, game_id: str, season
         
         state = GameLogState(game_id)
 
+        player_map = {
+            p["link"]: p["player_id"]
+            for p in player_list
+        }
+
         log_count = 0
         for log in log_data:
             log_count += 1
@@ -37,11 +42,7 @@ def process_pbplog(conn: sqlite3.Connection, game_url: str, game_id: str, season
             else:
                 player = NPBPlaybyplayParser.get_player(log)
                 team_id = away_team_id if state.half else home_team_id
-                player_map = {
-                    (p["name"].strip(), p["team_id"]): p["player_id"]
-                    for p in player_list
-                }
-                player_id = player_map.get(player["name"], team_id)
+                player_id = player_map.get(player["link"])
                 if not player_id:
                     return GameProcessResult(ProcessResult.FAILED, None, f"Roster에 존재하지 않는 선수: name: {player['name']}, team: {team_id}")
 
@@ -69,6 +70,7 @@ def process_pbplog(conn: sqlite3.Connection, game_url: str, game_id: str, season
                     event["detail_code"] = detail_code
 
                 row = state.apply(event)
+                print(f"Event row: {row}")
                 log_idx = BaseRepository.insert(conn, "game_logs", row, True)
                 if not log_idx:
                     return GameProcessResult(ProcessResult.FAILED, None, f"DB 오류: game_logs / type: {event['type']}")
