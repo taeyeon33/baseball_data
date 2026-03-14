@@ -70,15 +70,16 @@ def process_box(conn: sqlite3.Connection, box_url: str, game_id: str, away_team_
         home_pitcher_data = NPBBoxParser.parse_home_pitcher_data(html)
 
         box_state = PlayerBoxState(game_id, away_team_id, home_team_id, player_id_map)
-        box_state.build_all_batter_data(away_batter_data, home_batter_data)
-        box_state.build_all_pitcher_data(away_pitcher_data, home_pitcher_data)
+        all_batter_data = box_state.build_all_batter_data(away_batter_data, home_batter_data)
+        all_pitcher_data = box_state.build_all_pitcher_data(away_pitcher_data, home_pitcher_data)
+        all_fielding_data = box_state.build_all_fielding_data(away_batter_data, home_batter_data, away_pitcher_data, home_pitcher_data)
 
         log_data = GameRepositories.get_game_logs(conn, game_id)
         
         game_state = GameBoxState(game_id, player_list, player_id_map)
         game_state.set_team_setting("away", away_batter_data, away_pitcher_data)
         game_state.set_team_setting("home", home_batter_data, home_pitcher_data)
-        
+
         for idx, log in enumerate(log_data):
             log_type = log["log_type"]
 
@@ -113,20 +114,25 @@ def process_box(conn: sqlite3.Connection, box_url: str, game_id: str, away_team_
                 game_state.set_svo(team, svo)
 
                 batter_list = home_batter_data if game_state.half else away_batter_data
-                link = player_link_map.get(pitcher_id)
                 batting_order_map = {
                     (b["link"]): b["batting_order"]
                     for b in batter_list
                 }
+                link = player_link_map.get(pitcher_id)
                 batting_order = batting_order_map.get(link)
                     
                 game_state.change_pitcher(pitcher_id, batting_order)
                 continue
         
             if log_type == "pinch_hitter":
+                batter_id = log["batter_id"]
+                game_state.change_batter(batter_id)
                 continue
 
             if log_type == "steal_base":
+                steal_data = game_state.steal_event(log)
+                # for sd in steal_data:
+                    
                 continue
 
             if log_type == "play":

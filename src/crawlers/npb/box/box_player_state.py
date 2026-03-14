@@ -140,3 +140,28 @@ class PlayerBoxState:
                 all_pitcher_data[player_id] = stat
 
         return all_pitcher_data
+    
+    @staticmethod
+    def build_all_fielding_data(self, away_batter_data, home_batter_data, away_pitcher_data, home_pitcher_data):
+        all_fielding_data = {}
+
+        combined = [
+            (away_batter_data, self.away_team_id),
+            (home_batter_data, self.home_team_id),
+            (away_pitcher_data, self.away_team_id),
+            (home_pitcher_data, self.home_team_id)
+        ]
+
+        for team_data, team_id in combined:
+            for raw in team_data:
+                player_link = raw.get("link")
+                player_id = self.player_map.get(player_link)
+
+                if not player_id:
+                    continue
+
+                stat = PlayerBoxState.create_empty_fielding_stat(player_id, team_id)
+
+                role = raw
+
+        return all_fielding_data

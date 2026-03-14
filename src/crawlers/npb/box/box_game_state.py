@@ -82,8 +82,27 @@ class GameBoxState:
             if not order:
                 self.away["lineup"][order] = pitcher_id
     
-    def change_batter(self):
-        return
+    def change_batter(self, batter_id: int):
+        team = self.away if self.half else self.home
+        order = team["batting_order_index"]
+        team["lineup"][order] = batter_id
+
+    def steal_event(self, log: dict):
+        runner = log["batter_id"]
+        pitcher = log["pitcher_id"]
+
+        text = log["raw_TEXT"]
+
+        if "盗塁成功" in text:
+            return {"type": "SB", "runner": runner, "pitcher": pitcher, "catcher": 0, "fielder": 0, "base": 2, "double": False}
+        
+        if "盗塁失敗" in text:
+            return {"type": "CS", "runner": runner, "pitcher": pitcher, "catcher": 0, "fielder": 0, "base": 2, "double": False}
+        
+        if "牽制アウト" in text:
+            return {"type": "PK", "runner": runner, "pitcher": pitcher, "catcher": 0, "fielder": 0, "base": 2}
+        
+        return None
 
     def batting_event(self):
         return

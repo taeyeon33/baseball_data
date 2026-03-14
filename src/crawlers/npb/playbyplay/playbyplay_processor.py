@@ -50,6 +50,7 @@ def process_pbplog(conn: sqlite3.Connection, game_url: str, game_id: str, season
 
                 if event["type"] == "pinch_hitter":
                     row = state.apply(event)
+                    print(f"Event row: {row}")
                     log_idx = BaseRepository.insert(conn, "game_logs", row, True)
                     if not log_idx:
                         return GameProcessResult(ProcessResult.FAILED, None, f"DB 오류: game_logs / type: {event['type']}")
